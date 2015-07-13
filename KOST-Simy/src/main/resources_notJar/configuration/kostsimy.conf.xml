@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<configuration>
+	<pathtologfile>logs</pathtologfile>
+	<pathtoworkdir>temp_KOST-Simy</pathtoworkdir>
+	<randomtest>50</randomtest>
+	<pathtoimgcmpexe>C:\Software\ImageCompareCommandLine\imgcmp.exe</pathtoimgcmpexe>
+	<imgcmplicensekey>TrailVersion</imgcmplicensekey>
+	<imgcmptolerance>medium</imgcmptolerance>
+</configuration>

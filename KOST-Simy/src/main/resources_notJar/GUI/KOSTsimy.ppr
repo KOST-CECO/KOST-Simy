@@ -1,0 +1,44 @@
+[Config]
+Relative path=1
+Compilator.SaveAll=0
+Compilator.Capture=0
+Compilator.HideOutput=0
+DefaultDir=P:\KOST\Tools\simpleGUI\_KOST-Simy_GUI
+DefaultCPIndex=4
+LogtoEnd=1
+DontOpen=0
+FileFormat=0
+[Project tree]
+KOSTsimy
+	+_workbench
+		KOSTsimy_de.nsi
+		langKOSTSimy_de.nsh
+		langKOSTSimy_fr.nsh
+		langKOSTSimy_en.nsh
+		KOSTsimy.ini
+		getJavaHome.nsh
+		val.ico
+		make_KOSTsimy.bat
+		KOSTsimy_fr.script
+		KOSTsimy_en.script
+		test.bat
+[Open project files]
+0=KOSTsimy_de.nsi
+1=KOSTsimy.ini
+2=langKOSTsimy_fr.nsh
+3=langKOSTsimy_en.nsh
+[Selected Project Files]
+Main=KOSTsimy_de.nsi
+Selected=KOSTsimy_de.nsi
+[KOSTsimy_de.nsi]
+TopLine=287
+Caret=5,297
+[KOSTsimy.ini]
+TopLine=111
+Caret=15,130
+[langKOSTsimy_fr.nsh]
+TopLine=15
+Caret=18,34
+[langKOSTsimy_en.nsh]
+TopLine=15
+Caret=32,34

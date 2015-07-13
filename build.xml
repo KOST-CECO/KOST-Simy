@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar_de_fr_en" name="Create Runnable Jar for Project KOST-Simy DE, FR, EN">
+	<!--ANT 1.7 is required                                        -->
+	<target name="create_run_jar_de_fr_en">
+        <mkdir dir="../KOST-Simy_TEST"/>
+		<!--Erstelle target, damit die Jars auf dem aktuellen Code erstellt werden-->
+		<mkdir dir="KOST-Simy/target/classes" />
+		<copy includeemptydirs="false" overwrite="true" todir="KOST-Simy/target/classes">
+			<fileset dir="KOST-Simy/src/main/java">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+		<copy includeemptydirs="false" overwrite="true" todir="KOST-Simy/target/classes">
+			<fileset dir="KOST-Simy/src/main/resources">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+		<copy file="README.md" todir="KOST-Simy/target/classes" />
+		<!--Kopiere de_messages.properties in target und erstelle kostsimy_de.jar -->
+		<copy file="KOST-Simy/src/main/resources/de_messages.properties" overwrite="true" tofile="KOST-Simy/target/classes/messages.properties"/>
+		<jar destfile="../KOST-Simy_TEST/kostsimy_de.jar">
+			<manifest>
+				<attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
+				<attribute name="Rsrc-Main-Class" value="ch.kostceco.tools.kostsimy.KOSTSimy"/>
+				<attribute name="Class-Path" value="."/>
+				<attribute name="Rsrc-Class-Path" value="./ commons-configuration-1.6.jar log4j-1.2.12.jar spring-context-3.0.0.RELEASE.jar commons-logging-1.1.1.jar commons-lang-2.4.jar spring-beans-3.0.0.RELEASE.jar spring-core-3.0.0.RELEASE.jar spring-asm-3.0.0.RELEASE.jar spring-aop-3.0.0.RELEASE.jar spring-expression-3.0.0.RELEASE.jar spring-jdbc-3.0.0.RELEASE.jar spring-orm-3.0.0.RELEASE.jar spring-security-core-3.0.0.RELEASE.jar spring-test-3.0.0.RELEASE.jar spring-tx-3.0.0.RELEASE.jar commons-beanutils-1.7.0.jar commons-beanutils-core-1.8.0.jar commons-collections-3.2.1.jar commons-digester-1.8.jar commons-io-2.0.jar junit-4.4.jar itextpdf-5.5.5.jar"/>
+			</manifest>
+			<zipfileset dir="KOST-Simy/target/classes"/>
+			<zipfileset dir="KOST-Simy/lib" includes="commons-configuration-1.6.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="log4j-1.2.12.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-context-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="commons-logging-1.1.1.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="commons-lang-2.4.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-beans-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-core-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-asm-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-aop-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-expression-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-jdbc-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-orm-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-security-core-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-test-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-tx-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="commons-beanutils-1.7.0.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="commons-beanutils-core-1.8.0.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="commons-collections-3.2.1.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="commons-digester-1.8.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="commons-io-2.0.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="junit-4.4.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="itextpdf-5.5.5.jar"/>
+		</jar>
+		<!--Kopiere fr_messages.properties in target und erstelle kostsimy_fr.jar -->
+		<copy file="KOST-Simy/src/main/resources/fr_messages.properties" overwrite="true" tofile="KOST-Simy/target/classes/messages.properties"/>
+		<jar destfile="../KOST-Simy_TEST/kostsimy_fr.jar">
+			<manifest>
+				<attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
+				<attribute name="Rsrc-Main-Class" value="ch.kostceco.tools.kostsimy.KOSTSimy"/>
+				<attribute name="Class-Path" value="."/>
+				<attribute name="Rsrc-Class-Path" value="./ commons-configuration-1.6.jar log4j-1.2.12.jar spring-context-3.0.0.RELEASE.jar commons-logging-1.1.1.jar commons-lang-2.4.jar spring-beans-3.0.0.RELEASE.jar spring-core-3.0.0.RELEASE.jar spring-asm-3.0.0.RELEASE.jar spring-aop-3.0.0.RELEASE.jar spring-expression-3.0.0.RELEASE.jar spring-jdbc-3.0.0.RELEASE.jar spring-orm-3.0.0.RELEASE.jar spring-security-core-3.0.0.RELEASE.jar spring-test-3.0.0.RELEASE.jar spring-tx-3.0.0.RELEASE.jar commons-beanutils-1.7.0.jar commons-beanutils-core-1.8.0.jar commons-collections-3.2.1.jar commons-digester-1.8.jar commons-io-2.0.jar junit-4.4.jar itextpdf-5.5.5.jar"/>
+			</manifest>
+			<zipfileset dir="KOST-Simy/target/classes"/>
+			<zipfileset dir="KOST-Simy/lib" includes="commons-configuration-1.6.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="log4j-1.2.12.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-context-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="commons-logging-1.1.1.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="commons-lang-2.4.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-beans-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-core-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-asm-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-aop-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-expression-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-jdbc-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-orm-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-security-core-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-test-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-tx-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="commons-beanutils-1.7.0.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="commons-beanutils-core-1.8.0.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="commons-collections-3.2.1.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="commons-digester-1.8.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="commons-io-2.0.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="junit-4.4.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="itextpdf-5.5.5.jar"/>
+		</jar>
+		<!--Kopiere en_messages.properties in target und erstelle kostsimy_en.jar -->
+		<copy file="KOST-Simy/src/main/resources/en_messages.properties" overwrite="true" tofile="KOST-Simy/target/classes/messages.properties"/>
+		<jar destfile="../KOST-Simy_TEST/kostsimy_en.jar">
+			<manifest>
+				<attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
+				<attribute name="Rsrc-Main-Class" value="ch.kostceco.tools.kostsimy.KOSTSimy"/>
+				<attribute name="Class-Path" value="."/>
+				<attribute name="Rsrc-Class-Path" value="./ commons-configuration-1.6.jar log4j-1.2.12.jar spring-context-3.0.0.RELEASE.jar commons-logging-1.1.1.jar commons-lang-2.4.jar spring-beans-3.0.0.RELEASE.jar spring-core-3.0.0.RELEASE.jar spring-asm-3.0.0.RELEASE.jar spring-aop-3.0.0.RELEASE.jar spring-expression-3.0.0.RELEASE.jar spring-jdbc-3.0.0.RELEASE.jar spring-orm-3.0.0.RELEASE.jar spring-security-core-3.0.0.RELEASE.jar spring-test-3.0.0.RELEASE.jar spring-tx-3.0.0.RELEASE.jar commons-beanutils-1.7.0.jar commons-beanutils-core-1.8.0.jar commons-collections-3.2.1.jar commons-digester-1.8.jar commons-io-2.0.jar junit-4.4.jar itextpdf-5.5.5.jar"/>
+			</manifest>
+			<zipfileset dir="KOST-Simy/target/classes"/>
+			<zipfileset dir="KOST-Simy/lib" includes="commons-configuration-1.6.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="log4j-1.2.12.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-context-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="commons-logging-1.1.1.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="commons-lang-2.4.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-beans-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-core-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-asm-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-aop-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-expression-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-jdbc-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-orm-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-security-core-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-test-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="spring-tx-3.0.0.RELEASE.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="commons-beanutils-1.7.0.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="commons-beanutils-core-1.8.0.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="commons-collections-3.2.1.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="commons-digester-1.8.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="commons-io-2.0.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="junit-4.4.jar"/>
+			<zipfileset dir="KOST-Simy/lib" includes="itextpdf-5.5.5.jar"/>
+		</jar>
+		<!--Kopiere alle benötigten Ordner und Dokumente in KOST-Simy_TEST-->
+		<copy overwrite="true" todir="../KOST-Simy_TEST/configuration">
+			<fileset dir="KOST-Simy/src/main/resources_notJar/configuration"/>
+		</copy>
+		<copy overwrite="true" todir="../KOST-Simy_TEST/doc">
+			<fileset dir="KOST-Simy/src/main/resources_notJar/doc"/>
+		</copy>
+		<copy overwrite="true" todir="../KOST-Simy_TEST/license">
+			<fileset dir="KOST-Simy/src/main/resources_notJar/license"/>
+		</copy>
+		<copy overwrite="true" todir="../KOST-Simy_TEST/resources">
+			<fileset dir="KOST-Simy/src/main/resources_notJar/resources"/>
+		</copy>
+		<copy file="KOST-Simy/src/main/resources_notJar/KOST-Simy_de.exe" todir="../KOST-Simy_TEST"/>
+		<copy file="KOST-Simy/src/main/resources_notJar/KOST-Simy_fr.exe" todir="../KOST-Simy_TEST"/>
+		<copy file="KOST-Simy/src/main/resources_notJar/KOST-Simy_en.exe" todir="../KOST-Simy_TEST"/>
+		<copy file="KOST-Simy/src/main/resources/de_messages.properties" overwrite="true" tofile="KOST-Simy/target/classes/messages.properties"/>
+	</target>
+</project>

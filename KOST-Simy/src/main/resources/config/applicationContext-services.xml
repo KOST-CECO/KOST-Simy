@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+	<!-- Common Services -->
+
+	<bean id="textResourceService"
+		class="ch.kostceco.tools.kostsimy.service.impl.TextResourceServiceImpl">
+	</bean>
+
+	<bean id="configurationService"
+		class="ch.kostceco.tools.kostsimy.service.impl.ConfigurationServiceImpl">
+		<property name="textResourceService" ref="textResourceService" />
+	</bean>
+
+	<bean id="messageService"
+		class="ch.kostceco.tools.kostsimy.service.impl.MessageServiceImpl">
+	</bean>
+
+
+	<!-- Validation Services -->
+	<bean id="pdfExtractJpegModule"
+		class="ch.kostceco.tools.kostsimy.comparison.modulepdfa.impl.PdfExtractJpegModuleImpl">
+		<property name="textResourceService" ref="textResourceService" />
+		<property name="messageService" ref="messageService" />
+		<property name="configurationService" ref="configurationService" />
+	</bean>
+
+	<bean id="compareImageModule"
+		class="ch.kostceco.tools.kostsimy.comparison.moduleci.impl.CompareImageModuleImpl">
+		<property name="textResourceService" ref="textResourceService" />
+		<property name="messageService" ref="messageService" />
+		<property name="configurationService" ref="configurationService" />
+	</bean>
+
+
+	<bean id="kostsimy" class="ch.kostceco.tools.kostsimy.KOSTSimy">
+		<property name="textResourceService" ref="textResourceService" />
+		<property name="configurationService" ref="configurationService" />
+	</bean>
+
+	<bean id="logconfigurator" class="ch.kostceco.tools.kostsimy.logging.LogConfigurator">
+		<property name="textResourceService" ref="textResourceService" />
+	</bean>
+
+	<bean id="controllerpdfa" class="ch.kostceco.tools.kostsimy.controller.Controllerpdfa">
+		<property name="textResourceService" ref="textResourceService" />
+		<property name="pdfExtractJpegModule" ref="pdfExtractJpegModule" />
+	</bean>
+
+	<bean id="controllerci" class="ch.kostceco.tools.kostsimy.controller.Controllerci">
+		<property name="textResourceService" ref="textResourceService" />
+		<property name="compareImageModule" ref="compareImageModule" />
+	</bean>
+
+</beans>

@@ -1,0 +1,4 @@
+s/KOST-Simy_de/KOST-Simy_en/g
+s/langKOSTsimy_de.nsh/langKOSTsimy_en.nsh/g
+s/KOSTsimy_de.jar/KOSTsimy_en.jar/g
+s/KOST-Simy_Anwendungshandbuch/KOST-Simy_Anwendungshandbuch/g
