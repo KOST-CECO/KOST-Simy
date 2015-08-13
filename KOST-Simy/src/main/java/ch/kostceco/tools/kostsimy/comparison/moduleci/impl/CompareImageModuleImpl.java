@@ -230,7 +230,7 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 									+ getTextResourceService()
 											.getText( ERROR_XML_CI_SIZEINVALID, imgSize1, imgSize2 ) );
 				}
-				if ( !isValidFailed) {
+				if ( isValidFailed) {
 					// Fehler evtl. Bild nicht io
 					getMessageService().logError(
 							getTextResourceService().getText( MESSAGE_XML_MODUL_CI )

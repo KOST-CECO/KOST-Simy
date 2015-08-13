@@ -1,7 +1,7 @@
 ; The name of the installer
-Name "KOST-Simy v1.6.1"
+Name "KOST-Simy v0.0.2"
 ; Sets the icon of the installer
-Icon "val.ico"
+Icon "simy.ico"
 ; remove the text 'Nullsoft Install System vX.XX' from the installer window 
 BrandingText "Copyright © KOST/CECO"
 ; The file to write
@@ -30,20 +30,19 @@ XPStyle on
 !define CONFIG        "KOSTsimy.conf.xml"
 !define CONFIGPATH    "configuration"
 !define BACKUP        "~backup"
-!define JARFILE       "KOSTsimy_fr.jar"
+!define JARFILE       "kostsimy_de.jar"
 !define XTRANS        "resources\XTrans_1.8.0.2\XTrans.exe"
 !define JAVAPATH      "resources\jre6"
 
 ;--------------------------------
 Var DIALOG
-Var KOSTsimy
+Var KOSTsimyO
+Var KOSTsimyR
 Var LOGFILE
 Var WORKDIR
 Var LOG
 Var HEAPSIZE
 Var JAVA
-Var T_FLAG
-Var P_FLAG
 Var HWND
 
 ;--------------------------------
@@ -63,7 +62,8 @@ Function .onInit
   DetailPrint "java home: $JAVA"
   
   ; initial setting for validation folder/file
-  StrCpy $KOSTsimy $EXEDIR
+  StrCpy $KOSTsimyO $EXEDIR
+  StrCpy $KOSTsimyR $EXEDIR
   
   ; create configuration backup
   CreateDirectory $EXEDIR\${CONFIGPATH}\${BACKUP}
@@ -114,14 +114,14 @@ Function ShowDialog
   
   ;WriteINIStr $DIALOG "${INTRO}"                 "Text"  "${INTROTXT}"
   WriteINIStr $DIALOG "${HELP_Button}"           "Text"  "${HELP_ButtonTXT}"
-  WriteINIStr $DIALOG "${FORMAT_RadioButton}"    "Text"  "${FORMAT_RadioButtonTXT}"
-  WriteINIStr $DIALOG "${SIP_RadioButton}"       "Text"  "${SIP_RadioButtonTXT}"
-  WriteINIStr $DIALOG "${LOG_RadioButton}"       "Text"  "${LOG_RadioButtonTXT}"
+  WriteINIStr $DIALOG "${ORIGINAL_FolderRequest}"   "Text"  "${ORIGINAL_FolderRequestTXT}"
+  WriteINIStr $DIALOG "${ORIGINAL_FileRequest}"     "Text"  "${ORIGINAL_FileRequestTXT}"
+  WriteINIStr $DIALOG "${ORIGINAL_SEL_FileFolder}"        "State" "${ORIGINAL_SEL_FileFolderTXT}"
   WriteINIStr $DIALOG "${JVM_Droplist}"          "Text"  "${JVM_DroplistTXT}"
-  WriteINIStr $DIALOG "${INPUT_Group}"           "Text"  "${INPUT_GroupTXT}"
-  WriteINIStr $DIALOG "${INPUT_FolderRequest}"   "Text"  "${INPUT_FolderRequestTXT}"
-  WriteINIStr $DIALOG "${INPUT_FileRequest}"     "Text"  "${INPUT_FileRequestTXT}"
-  WriteINIStr $DIALOG "${SEL_FileFolder}"        "State" "${SEL_FileFolderTXT}"
+ ; WriteINIStr $DIALOG "${INPUT_Group}"           "Text"  "${INPUT_GroupTXT}"
+  WriteINIStr $DIALOG "${REPLICA_FolderRequest}"   "Text"  "${REPLICA_FolderRequestTXT}"
+  WriteINIStr $DIALOG "${REPLICA_FileRequest}"     "Text"  "${REPLICA_FileRequestTXT}"
+  WriteINIStr $DIALOG "${REPLICA_SEL_FileFolder}"        "State" "${REPLICA_SEL_FileFolderTXT}"
   WriteINIStr $DIALOG "${START_Validation}"      "Text"  "${START_ValidationTXT}"
   WriteINIStr $DIALOG "${EDIT_Konfiguration}"    "Text"  "${EDIT_KonfigurationTXT}"
   WriteINIStr $DIALOG "${RESET_Konfiguration}"   "Text"  "${RESET_KonfigurationTXT}"
@@ -145,20 +145,22 @@ Function ShowDialog
   #SendMessage $1 ${WM_SETFONT} $R1 0
   SetCtlColors $1 0x000000 0x05D62A 
  
-  ; Set radio button flag
-  StrCpy $T_FLAG '--format'
-  StrCpy $P_FLAG ''
-
   ; Display the validation options dialog
   InstallOptions::show
 FunctionEnd
 
 ;--------------------------------
 Function LeaveDialog
-  ; If file, truncate KOSTsimy to folder  name
-  ${GetFileExt} $KOSTsimy $R0
+  ; If file, truncate KOSTsimyO to folder  name
+  ${GetFileExt} $KOSTsimyO $R0
   ${If} $R0 != ''
-    ${GetParent} $KOSTsimy $KOSTsimy
+    ${GetParent} $KOSTsimyO= $KOSTsimyO
+  ${EndIf}
+
+    ; If file, truncate KOSTsimyR to folder  name
+  ${GetFileExt} $KOSTsimyR $R0
+  ${If} $R0 != ''
+    ${GetParent} $KOSTsimyR= $KOSTsimyR
   ${EndIf}
 
   ; To get the input of the user, read the State value of a Field 
@@ -172,75 +174,67 @@ Function LeaveDialog
       ExecShell "open" $1
       Abort
     ${Break}
-    
-    ${Case} '${FORMAT_RadioButton}'
-      ReadINIStr $1 $DIALOG '${SIP_RadioButton}' 'HWND'
-      SendMessage $1 ${BM_SETCHECK} 0 0
-      ReadINIStr $1 $DIALOG '${INPUT_Group}' 'HWND'
-      SendMessage $1 ${WM_SETTEXT} 1 'STR:${FORMAT_RadioButtonTXT}'
-      StrCpy $T_FLAG '--format'
-      Abort
-    ${Break}
-    
-    ${Case} '${SIP_RadioButton}'
-      ReadINIStr $1 $DIALOG '${FORMAT_RadioButton}' 'HWND'
-      SendMessage $1 ${BM_SETCHECK} 0 0
-      ReadINIStr $1 $DIALOG '${INPUT_Group}' 'HWND'
-      SendMessage $1 ${WM_SETTEXT} 1 'STR:${SIP_RadioButtonTXT}'
-      StrCpy $T_FLAG '--sip'
-      Abort
-    ${Break}
-    
-    ${Case} '${LOG_RadioButton}'
-      ${If} $P_FLAG == ''
-        StrCpy $P_FLAG '-v'
-        ReadINIStr $1 $DIALOG '${LOG_RadioButton}' 'HWND'
-        SendMessage $1 ${BM_SETCHECK} 1 0
-      ${Else}
-        StrCpy $P_FLAG ''
-        ReadINIStr $1 $DIALOG '${LOG_RadioButton}' 'HWND'
-        SendMessage $1 ${BM_SETCHECK} 0 0
-      ${EndIf}
-      Abort
-    ${Break}
-    
-    ${Case} '${INPUT_FileRequest}'
-      ${If} $T_FLAG == '--sip'
-        nsDialogs::SelectFileDialog 'open' '$KOSTsimy\*.zip' 'SIP Files|*.zip'
-      ${Else}
-        nsDialogs::SelectFileDialog 'open' '$KOSTsimy\*' ''
-      ${EndIf}
+
+    ${Case} '${ORIGINAL_FileRequest}'
+      nsDialogs::SelectFileDialog 'open' '$KOSTsimyO\*' ''
       Pop $R0
       ${If} $R0 == ''
         MessageBox MB_OK "${FILE_SelectTXT}"
       ${Else}
-        ReadINIStr $1 $DIALOG '${SEL_FileFolder}' 'HWND'
+        ReadINIStr $1 $DIALOG '${ORIGINAL_SEL_FileFolder}' 'HWND'
         SendMessage $1 ${WM_SETTEXT} 1 'STR:$R0'
-        StrCpy $KOSTsimy $R0
+        StrCpy $KOSTsimyO $R0
       ${EndIf}
       Abort
     ${Break}
     
-    ${Case} '${INPUT_FolderRequest}'
-      nsDialogs::SelectFolderDialog "${FOLDER_SelectTXT}" "$KOSTsimy"
+    ${Case} '${ORIGINAL_FolderRequest}'
+      nsDialogs::SelectFolderDialog "${FOLDER_SelectTXT}" "$KOSTsimyO"
       Pop $R0
       ${If} $R0 == 'error'
         MessageBox MB_OK "${FOLDER_SelectTXT}"
       ${Else}
-        ReadINIStr $1 $DIALOG '${SEL_FileFolder}' 'HWND'
+        ReadINIStr $1 $DIALOG '${ORIGINAL_SEL_FileFolder}' 'HWND'
         SendMessage $1 ${WM_SETTEXT} 1 'STR:$R0'
-        StrCpy $KOSTsimy $R0
+        StrCpy $KOSTsimyO $R0
+      ${EndIf}
+      Abort
+    ${Break}
+    
+    
+    ${Case} '${REPLICA_FileRequest}'
+      nsDialogs::SelectFileDialog 'open' '$KOSTsimyR\*' ''
+      Pop $R0
+      ${If} $R0 == ''
+        MessageBox MB_OK "${FILE_SelectTXT}"
+      ${Else}
+        ReadINIStr $1 $DIALOG '${REPLICA_SEL_FileFolder}' 'HWND'
+        SendMessage $1 ${WM_SETTEXT} 1 'STR:$R0'
+        StrCpy $KOSTsimyR $R0
+      ${EndIf}
+      Abort
+    ${Break}
+    
+    ${Case} '${REPLICA_FolderRequest}'
+      nsDialogs::SelectFolderDialog "${FOLDER_SelectTXT}" "$KOSTsimyR"
+      Pop $R0
+      ${If} $R0 == 'error'
+        MessageBox MB_OK "${FOLDER_SelectTXT}"
+      ${Else}
+        ReadINIStr $1 $DIALOG '${REPLICA_SEL_FileFolder}' 'HWND'
+        SendMessage $1 ${WM_SETTEXT} 1 'STR:$R0'
+        StrCpy $KOSTsimyR $R0
       ${EndIf}
       Abort
     ${Break}
 
     ${Case} '${START_Validation}'
-      ReadINIStr $R0 $DIALOG "${SEL_FileFolder}" "State"
+      ReadINIStr $R0 $DIALOG "${ORIGINAL_SEL_FileFolder}" "State"
       ; Trim path or file name
       StrCpy $R1 $R0 1 -1
       StrCmp $R1 '\' 0 +2
         StrCpy $R0 $R0 -1
-        GetFullPathName $KOSTsimy $R0
+        GetFullPathName $KOSTsimyO $R0
       Call RunJar
       Abort
     ${Break}
@@ -278,7 +272,7 @@ Function RunJar
   Call checkHeapsize
 
   ; get logfile name
-  ${GetFileName} $KOSTsimy $LOGFILE
+  ${GetFileName} $KOSTsimyO $LOGFILE
   CreateDirectory $LOG
   IfFileExists "$LOG\*.*" +2 0
   CreateDirectory "$EXEDIR\$LOG"
@@ -294,34 +288,24 @@ Function RunJar
 
   ; Launch java program
   ClearErrors
-  ; MessageBox MB_OK '"$JAVA\bin\java.exe" $HEAPSIZE -jar ${JARFILE} $T_FLAG "$KOSTsimy" $P_FLAG'
-  ExecWait '"$JAVA\bin\java.exe" $HEAPSIZE -jar ${JARFILE} $T_FLAG "$KOSTsimy" $P_FLAG'
+  ; MessageBox MB_OK '"$JAVA\bin\java.exe" $HEAPSIZE -jar ${JARFILE} "$KOSTsimyO" "$KOSTsimyR"
+  ExecWait '"$JAVA\bin\java.exe" $HEAPSIZE -jar ${JARFILE} "$KOSTsimyO" "$KOSTsimyR"'
   IfFileExists "$LOG\$LOGFILE.kost-simy.log*" 0 prog_err
   IfErrors goto_err goto_ok
   
 goto_err:
     ; validation with error
     IfFileExists "$LOG\$LOGFILE.kost-simy.log*" 0 prog_err
-    ${If} $T_FLAG == '--sip'
-      MessageBox MB_YESNO|MB_ICONEXCLAMATION "$KOSTsimy$\n${SIP_FALSE}" IDYES showlog
-      Goto rm_workdir
-  ${Else}
-      MessageBox MB_YESNO|MB_ICONEXCLAMATION "$KOSTsimy$\n${FORMAT_FALSE}" IDYES showlog
-      Goto rm_workdir
-  ${EndIf}
-prog_err:
-    MessageBox MB_OK|MB_ICONEXCLAMATION "${PROG_ERR} $\n$JAVA\bin\java.exe -jar ${JARFILE} $T_FLAG $KOSTsimy $P_FLAG"
+    MessageBox MB_YESNO|MB_ICONEXCLAMATION "$KOSTsimyO$\n${FORMAT_FALSE}" IDYES showlog
+    Goto rm_workdir
+  prog_err:
+    MessageBox MB_OK|MB_ICONEXCLAMATION "${PROG_ERR} $\n$JAVA\bin\java.exe -jar ${JARFILE} $KOSTsimyO $KOSTsimyR"
     Goto rm_workdir
 goto_ok:
   ; validation without error completed
-  ${If} $T_FLAG == '--sip'
-    MessageBox MB_YESNO "$KOSTsimy$\n${SIP_OK}" IDYES showlog
-    Goto rm_workdir
-  ${Else}
-    MessageBox MB_YESNO "$KOSTsimy$\n${FORMAT_OK}" IDYES showlog
-    Goto rm_workdir
-  ${EndIf}
-showlog:
+  MessageBox MB_YESNO "$KOSTsimyO$\n${FORMAT_OK}" IDYES showlog
+  Goto rm_workdir
+  showlog:
   ; read logfile in detail view
   GetFullPathName $1 $LOG
   IfFileExists "$LOG\$LOGFILE.kost-simy.log.xml" 0 +3
