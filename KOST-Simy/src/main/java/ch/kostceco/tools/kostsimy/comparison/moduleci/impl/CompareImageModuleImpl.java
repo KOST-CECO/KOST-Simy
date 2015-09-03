@@ -57,7 +57,9 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 		// Initialisierung IMGCMP -> überprüfen der Angaben: existiert die imgcmpExe am angebenen Ort?
 		String pathToImgcmpExe = getConfigurationService().getPathToImgcmpExe();
 		String imgcmpLicenseKey = getConfigurationService().imgcmpLicenseKey();
-		String imgcmpTolerance = getConfigurationService().imgcmpTolerance();
+		String imgcmpToleranceTxt = getConfigurationService().imgcmpTolerance();
+		String imgcmpTolerance = "10%";
+		double percentageInvalid = 99.9999;
 		/* Nicht vergessen in "src/main/resources/config/applicationContext-services.xml" beim
 		 * entsprechenden Modul die property anzugeben: <property name="configurationService"
 		 * ref="configurationService" /> */
@@ -71,7 +73,7 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 			return false;
 		}
 
-		if (imgcmpLicenseKey.equals( "TrailVersion" ) ) {
+		if ( imgcmpLicenseKey.equalsIgnoreCase( "TrailVersion" ) ) {
 			// imgcmp.exe existiert nicht in der Vollversion --> Abbruch
 			getMessageService().logError(
 					getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
@@ -79,24 +81,18 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 			return false;
 		}
 
-		if ( imgcmpTolerance.equals( "small" ) ) {
+		if ( imgcmpToleranceTxt.equalsIgnoreCase( "small" ) ) {
 			// small = 5%
 			imgcmpTolerance = "5%";
-		} else if ( imgcmpTolerance.equals( "large" ) ) {
+			percentageInvalid = 99.999999;
+		} else if ( imgcmpToleranceTxt.equalsIgnoreCase( "large" ) ) {
 			// large = 20%
 			imgcmpTolerance = "20%";
-		} else if ( imgcmpTolerance.equals( "medium" ) ) {
+			percentageInvalid = 99.99;
+		} else {
 			// medium = 10%
 			imgcmpTolerance = "10%";
-		} else {
-			try {
-				int iImgcmpTolerance = Integer.parseInt( imgcmpTolerance );
-				imgcmpTolerance = iImgcmpTolerance+"%";
-			} catch ( Exception ex ) {
-				// unzulaessige Eingabe --> medium = 10% wird gesetzt
-				imgcmpTolerance = "10%";
-			}
-
+			percentageInvalid = 99.9999;
 		}
 
 		pathToImgcmpExe = "\"" + pathToImgcmpExe + "\"";
@@ -159,9 +155,11 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 
 				Util.switchOnConsole();
 			} catch ( Exception e ) {
-				getMessageService().logError(
-						getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
-								+ getTextResourceService().getText( ERROR_XML_IMGCMP_SERVICEFAILED, e.getMessage() ) );
+				getMessageService()
+						.logError(
+								getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
+										+ getTextResourceService().getText( ERROR_XML_IMGCMP_SERVICEFAILED,
+												e.getMessage() ) );
 				return false;
 			} finally {
 				if ( proc != null ) {
@@ -172,36 +170,73 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 			}
 			// Ende IMGCMP direkt auszulösen
 
-
 			try {
 				@SuppressWarnings("resource")
 				BufferedReader in = new BufferedReader( new FileReader( report ) );
 				String line;
-				String imgSize1 ="1";
-				String imgSize2 ="1";
+				String imgSize1 = "1";
+				String imgSize2 = "1";
 				while ( (line = in.readLine()) != null ) {
 
 					concatenatedOutputs.append( line );
 					concatenatedOutputs.append( NEWLINE );
 
-					/* die Similarity-Zeile enthält normalerweise bei Ähnlichen Bilder
-					 * [Similarity]: 100.00% -----------------------------------------------------------------
+					/* die Similarity-Zeile enthält normalerweise bei Ähnlichen Bilder [Similarity]: 100.00%
+					 * -----------------------------------------------------------------
 					 * 
 					 * Bei sehr vielen Pixels hat es aber einen Rechnungsfehler und wird negativ...
 					 * 
-					 * Als Alternative wird  "[Different Pixel Count in Sharing Image]: 0 of " verwendet
-					 * ähnliche Bilder: "[Different Pixel Count in Sharing Image]: 0 of " (darin ist die Toleranz pro pixel bereits
-					 * enthalten. Bilder mit einer grösseren Abweichung: <0 */
+					 * Als Alternative wird "[Different Pixel Count in Sharing Image]: 0 of " verwendet
+					 * ähnliche Bilder: "[Different Pixel Count in Sharing Image]: 0 of " (darin ist die
+					 * Toleranz pro pixel bereits enthalten. Bilder mit einer Abweichung: <0 */
 
 					if ( line.contains( "[Different Pixel Count in Sharing Image]" ) ) {
 						if ( !line.contains( ": 0 of " ) ) {
-							// Bilder mit einer grösseren Abweichung
-							isValid = false;
+							/* Bilder mit einer Abweichung: Prozent ermitteln und mit percentageInvalid abgleichen */
+							double z1 = 0;
+							double z2 = 0;
+							double z2temp = 0;
+							double percentageCalc = 0.0;
+							double percentageCalcInv = 0.0;
+
+							/* Invalide px und total px aus
+							 * "[Different Pixel Count in Sharing Image]: 3 of 46768272 px" extrahieren */
 							String lineReport = line.substring( 42 );
-							getMessageService().logError(
-									getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
-											+ getTextResourceService().getText( ERROR_XML_CI_CIINVALID, lineReport,
-													imgcmpTolerance ) );
+							// lineReport = 3 of 46768272 px
+
+							// Wörter trennen und speichern der beiden Zahlen-Elemente
+							String[] strArray = lineReport.split( "\\s" );
+							for ( String element : strArray ) {
+								if ( !element.contains( "of" ) && !element.contains( "px" ) ) {
+									// zahl 3 oder 46768272 in unserem Beispiel
+									if ( z1 == 0 ) {
+										z1 = Double.parseDouble(element);
+									} else {
+										z2 = Double.parseDouble(element);
+									}
+								}
+							}
+
+							// Prozentzahl ausrechnen
+							if ( z2 < z1 ) {
+								z2temp = z1;
+								z1=z2;
+								z2=z2temp;
+							}
+percentageCalc = 100 - (100 / z2 * z1);
+percentageCalcInv = 100 - percentageCalc;
+
+							// Prozetzahlen vergleichen
+
+							if ( percentageInvalid > percentageCalc ) {
+								// Bilder mit einer grösseren Abweichung
+								isValid = false;
+
+								getMessageService().logError(
+										getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
+												+ getTextResourceService().getText( ERROR_XML_CI_CIINVALID, percentageCalcInv, z2,
+														imgcmpToleranceTxt ) );
+							}
 						}
 					}
 					if ( line.contains( "[Image 1 Size]:" ) ) {
@@ -212,25 +247,26 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 					if ( line.contains( "[Image 2 Size]:" ) ) {
 						imgSize2 = line.substring( 15 );
 					}
-					if ( line.contains( "Illegal license key:")){
+					if ( line.contains( "Illegal license key:" ) ) {
 						getMessageService().logError(
 								getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
 										+ getTextResourceService().getText( ERROR_XML_IMGCMP_LICENSE ) );
 						return false;
 					}
-					if ( line.contains( "Failed to compare because:")){
+					if ( line.contains( "Failed to compare because:" ) ) {
 						isValidFailed = true;
 					}
 				}
 				if ( !imgSize1.equals( imgSize2 ) ) {
 					// die beiden Bilder sind nicht gleich gross
 					isValid = false;
-					getMessageService().logError(
-							getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
-									+ getTextResourceService()
-											.getText( ERROR_XML_CI_SIZEINVALID, imgSize1, imgSize2 ) );
+					getMessageService()
+							.logError(
+									getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
+											+ getTextResourceService().getText( ERROR_XML_CI_SIZEINVALID, imgSize1,
+													imgSize2 ) );
 				}
-				if ( isValidFailed) {
+				if ( isValidFailed ) {
 					// Fehler evtl. Bild nicht io
 					getMessageService().logError(
 							getTextResourceService().getText( MESSAGE_XML_MODUL_CI )

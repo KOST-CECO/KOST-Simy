@@ -8,10 +8,8 @@ CompletedText "Die KOST-Simy Installation wird überprüft"
 DetailsButtonText "Details zeigen"
 
 !define SIP_MISSING       "n'est-ce pas un répertoire / fichier SIP valide"
-!define SIP_OK            "Validation SIP réussie, ouvrir le fichier log?"
-!define FORMAT_OK         "Validation du format réussie, d'ouvrir le fichier log?"
-!define SIP_FALSE         "Validation SIP a échoué, ouvrir le fichier log?"
-!define FORMAT_FALSE      "Validation du format a échoué, ouvrir le fichier log?"
+!define FORMAT_OK         "Comparaison réussie, d'ouvrir le fichier log?"
+!define FORMAT_FALSE      "Comparaison a échoué, ouvrir le fichier log?"
 !define PROG_ERR          "Erreur Java lorsque l'exécution du programme:"
 !define LOG_ERR           "Pas d'autorisation d'écriture pour le répertoire de logging:"
 

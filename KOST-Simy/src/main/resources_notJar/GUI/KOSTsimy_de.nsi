@@ -1,5 +1,5 @@
 ; The name of the installer
-Name "KOST-Simy v0.0.2"
+Name "KOST-Simy v0.0.3"
 ; Sets the icon of the installer
 Icon "simy.ico"
 ; remove the text 'Nullsoft Install System vX.XX' from the installer window 
@@ -188,6 +188,19 @@ Function LeaveDialog
       Abort
     ${Break}
     
+    ${Case} '${REPLICA_FileRequest}'
+      nsDialogs::SelectFileDialog 'open' '$KOSTsimyR\*' ''
+      Pop $R0
+      ${If} $R0 == ''
+        MessageBox MB_OK "${FILE_SelectTXT}"
+      ${Else}
+        ReadINIStr $1 $DIALOG '${REPLICA_SEL_FileFolder}' 'HWND'
+        SendMessage $1 ${WM_SETTEXT} 1 'STR:$R0'
+        StrCpy $KOSTsimyR $R0
+      ${EndIf}
+      Abort
+    ${Break}
+        
     ${Case} '${ORIGINAL_FolderRequest}'
       nsDialogs::SelectFolderDialog "${FOLDER_SelectTXT}" "$KOSTsimyO"
       Pop $R0
@@ -201,21 +214,7 @@ Function LeaveDialog
       Abort
     ${Break}
     
-    
-    ${Case} '${REPLICA_FileRequest}'
-      nsDialogs::SelectFileDialog 'open' '$KOSTsimyR\*' ''
-      Pop $R0
-      ${If} $R0 == ''
-        MessageBox MB_OK "${FILE_SelectTXT}"
-      ${Else}
-        ReadINIStr $1 $DIALOG '${REPLICA_SEL_FileFolder}' 'HWND'
-        SendMessage $1 ${WM_SETTEXT} 1 'STR:$R0'
-        StrCpy $KOSTsimyR $R0
-      ${EndIf}
-      Abort
-    ${Break}
-    
-    ${Case} '${REPLICA_FolderRequest}'
+        ${Case} '${REPLICA_FolderRequest}'
       nsDialogs::SelectFolderDialog "${FOLDER_SelectTXT}" "$KOSTsimyR"
       Pop $R0
       ${If} $R0 == 'error'
@@ -235,6 +234,12 @@ Function LeaveDialog
       StrCmp $R1 '\' 0 +2
         StrCpy $R0 $R0 -1
         GetFullPathName $KOSTsimyO $R0
+      ReadINIStr $R0 $DIALOG "${REPLICA_SEL_FileFolder}" "State"
+      ; Trim path or file name
+      StrCpy $R1 $R0 1 -1
+      StrCmp $R1 '\' 0 +2
+        StrCpy $R0 $R0 -1
+        GetFullPathName $KOSTsimyR $R0
       Call RunJar
       Abort
     ${Break}

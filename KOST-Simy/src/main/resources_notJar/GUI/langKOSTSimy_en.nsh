@@ -8,10 +8,8 @@ CompletedText "The KOST-Simy installation is beeing checked"
 DetailsButtonText "Show Details"
 
 !define SIP_MISSING          "Is not a valid file SIP / SIP directory"
-!define SIP_OK               "SIP passed validation , open log file?"
-!define FORMAT_OK            "Format validation passed, open log file?"
-!define SIP_FALSE            "SIP validation failed, open log file?"
-!define FORMAT_FALSE         "Format validation failed, open log file?"
+!define FORMAT_OK            "Comparison passed, open log file?"
+!define FORMAT_FALSE         "Comparison failed, open log file?"
 !define PROG_ERR             "General Java runtime error:"
 !define LOG_ERR              "No write access in LOG folder:"
 

@@ -40,8 +40,8 @@
 					tr.captionm {background-color: #f8dfdf}
 					tr.captionio {background-color: #afeeaf; font-weight:bold}
 					tr.captioniom {background-color: #ccffcc}
-					tr.captioninfo
-					{background-color: #b2b2c5; font-weight:bold}
+					tr.captioninfo {background-color: #b2b2c5; font-weight:bold}
+					tr.captioninfom {background-color: #b2b2c5}
 				</style>
 			</head>
 			<body>
@@ -77,9 +77,9 @@
 					</div>
 					<br />
 				</xsl:for-each>
-				<h2>Invalid: (<xsl:value-of select="KOSTSimyLog/Statistics/InvalidPercentage"/>%)</h2>
-				<xsl:for-each select="KOSTSimyLog/Image/Validation">
-					<xsl:if test="Invalid">
+				<h2>Dissimilar: (<xsl:value-of select="KOSTSimyLog/Statistics/DissimilarPercentage"/>%)</h2>
+				<xsl:for-each select="KOSTSimyLog/Image/Comparison">
+					<xsl:if test="Dissimilar">
 						<div>
 							<table width="100%">
 								<tr class="caption">
@@ -107,9 +107,9 @@
 						<br />
 					</xsl:if>
 				</xsl:for-each>
-				<h2>Valid: (<xsl:value-of select="KOSTSimyLog/Statistics/ValidPercentage"/>%)</h2>
-				<xsl:for-each select="KOSTSimyLog/Image/Validation">
-					<xsl:if test="Valid">
+				<h2>Similar: (<xsl:value-of select="KOSTSimyLog/Statistics/SimilarPercentage"/>%)</h2>
+				<xsl:for-each select="KOSTSimyLog/Image/Comparison">
+					<xsl:if test="Similar">
 						<div>
 							<table width="100%">
 								<tr class="captionio">
@@ -136,16 +136,16 @@
 					</xsl:if>
 				</xsl:for-each>
 				<br />
-				<h2>Not validated: (<xsl:value-of select="KOSTSimyLog/Statistics/NotValidatedPercentage"/>%)</h2>
-				<xsl:for-each select="KOSTSimyLog/Image/Validation">
-					<xsl:if test="NotValidated">
+				<h2>Not compared: (<xsl:value-of select="KOSTSimyLog/Statistics/NotComparedPercentage"/>%)</h2>
+				<xsl:for-each select="KOSTSimyLog/Image/Comparison">
+					<xsl:if test="NotCompared">
 						<div>
 							<table width="100%">
 								<tr class="captioninfo">
-									<td width="50%">
+									<td width="25%">
 										<xsl:value-of select="ValFile" />
 									</td>
-									<td width="50%">
+									<td width="75%">
 										<xsl:value-of select="Message" />
 									</td>
 								</tr>
