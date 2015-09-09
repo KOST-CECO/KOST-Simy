@@ -32,7 +32,7 @@
 	</bean>
 
 	<bean id="compareImageModule"
-		class="ch.kostceco.tools.kostsimy.comparison.moduleci.impl.CompareImageModuleImpl">
+		class="ch.kostceco.tools.kostsimy.comparison.moduleim.impl.CompareImageModuleImpl">
 		<property name="textResourceService" ref="textResourceService" />
 		<property name="messageService" ref="messageService" />
 		<property name="configurationService" ref="configurationService" />

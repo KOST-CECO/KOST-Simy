@@ -1,6 +1,6 @@
 /* == KOST-Simy =================================================================================
- * The KOST-Simy application is used for Compare TIFF, JPEG and PDF/A-Files. Copyright (C) 2015
- * Claire Röthlisberger (KOST-CECO)
+ * The KOST-Simy application is used for Compare Image-Files. Copyright (C) 2015 Claire
+ * Röthlisberger (KOST-CECO)
  * -----------------------------------------------------------------------------------------------
  * KOST-Simy is a development of the KOST-CECO. All rights rest with the KOST-CECO. This application
  * is free software: you can redistribute it and/or modify it under the terms of the GNU General
@@ -36,22 +36,13 @@ public interface ConfigurationService extends Service
 	 * @return Stichprobe in Prozent */
 	String getRandomTest();
 
-	/** Gibt den Pfad des IMGCMP-Verzeichnisses zurück.
-	 * 
-	 * @return Pfad des IMGCMP-Verzeichnisses */
-	String getPathToImgcmpExe();
-
-	/** Lizenz-Schlüssel zu ImageCompareCommandLine (IMGCMP)
-	 * 
-	 * @return Lizenz-Schlüssel */
-	String imgcmpLicenseKey();
-
 	/** Toleranz beim Bildervergleich
-	 * small = 5% diff pro Pixel
-	 * medium = 10% diff pro Pixel
-	 * large = 20% diff pro Pixel
+	 * S = 2% color diff pro Pixel
+	 * M = 5% color diff pro Pixel
+	 * L = 10% color diff pro Pixel
+	 * XL = 15% color diff pro Pixel
 	 * 
 	 * @return toleranz-text */
-	String imgcmpTolerance();
+	String getImTolerance();
 
 }

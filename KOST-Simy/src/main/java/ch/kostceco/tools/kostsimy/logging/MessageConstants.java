@@ -1,6 +1,6 @@
 /* == KOST-Simy =================================================================================
- * The KOST-Simy application is used for Compare TIFF, JPEG and PDF/A-Files. Copyright (C) 2015
- * Claire Röthlisberger (KOST-CECO)
+ * The KOST-Simy application is used for Compare Image-Files. Copyright (C) 2015 Claire
+ * Röthlisberger (KOST-CECO)
  * -----------------------------------------------------------------------------------------------
  * KOST-Simy is a development of the KOST-CECO. All rights rest with the KOST-CECO. This application
  * is free software: you can redistribute it and/or modify it under the terms of the GNU General
@@ -73,18 +73,19 @@ public interface MessageConstants
 
 	// *************Modul-Meldungen*************************************************************************
 	// Modul PDF Extract
-	String	ERROR_XML_PDFA_JPEGS									= "error.xml.pdfa.jpegs";
+	String	ERROR_XML_PDFA_JPEG										= "error.xml.pdfa.jpeg";
 	String	ERROR_XML_PDFA_JP2										= "error.xml.pdfa.jp2";
+	String	ERROR_XML_PDFA_JPEGS									= "error.xml.pdfa.jpegs";
+	String	ERROR_XML_PDFA_JP2S										= "error.xml.pdfa.jp2s";
+	String	ERROR_XML_PDFA_JPEGJP2								= "error.xml.pdfa.jpegjp2";
 	String	ERROR_XML_PDFA_JBIG2									= "error.xml.pdfa.jbig2";
 	String	ERROR_XML_PDFA_CCITT									= "error.xml.pdfa.ccitt";
 
 	// Modul IMGCMP
-	String	ERROR_XML_IMGCMP_MISSING							= "error.xml.imgcmp.missing";
-	String	ERROR_XML_IMGCMP_SERVICEFAILED				= "error.xml.imgcmp.servicefailed";
+	String	ERROR_XML_IMCMP_MISSING								= "error.xml.imcmp.missing";
+	String	ERROR_XML_IMCMP_SERVICEFAILED					= "error.xml.imcmp.servicefailed";
+	String	ERROR_XML_IMCMP_NOREPORT							= "error.xml.imcmp.noreport";
 	String	ERROR_XML_CI_CIINVALID								= "error.xml.ci.ciinvalid";
 	String	ERROR_XML_CI_SIZEINVALID							= "error.xml.ci.sizeinvalid";
-	String	ERROR_XML_CI_CIFAILED									= "error.xml.ci.cifailed";
-
-	String	ERROR_XML_IMGCMP_INIT									= "error.xml.imgcmp.init";
-	String	ERROR_XML_IMGCMP_LICENSE							= "error.xml.imgcmp.license";
+	String	ERROR_XML_CI_PIXELINVALID							= "error.xml.ci.pixelinvalid";
 }

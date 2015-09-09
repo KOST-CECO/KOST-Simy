@@ -1,6 +1,6 @@
 /* == KOST-Simy =================================================================================
- * The KOST-Simy application is used for Compare TIFF, JPEG and PDF/A-Files. Copyright (C) 2015
- * Claire Röthlisberger (KOST-CECO)
+ * The KOST-Simy application is used for Compare Image-Files. Copyright (C) 2015 Claire
+ * Röthlisberger (KOST-CECO)
  * -----------------------------------------------------------------------------------------------
  * KOST-Simy is a development of the KOST-CECO. All rights rest with the KOST-CECO. This application
  * is free software: you can redistribute it and/or modify it under the terms of the GNU General
@@ -17,15 +17,15 @@ package ch.kostceco.tools.kostsimy.controller;
 
 import java.io.File;
 
-import ch.kostceco.tools.kostsimy.comparison.moduleci.CompareImageModule;
-import ch.kostceco.tools.kostsimy.exception.moduleci.CompareImageException;
+import ch.kostceco.tools.kostsimy.comparison.moduleim.CompareImageModule;
+import ch.kostceco.tools.kostsimy.exception.moduleim.CompareImageException;
 import ch.kostceco.tools.kostsimy.logging.Logger;
 import ch.kostceco.tools.kostsimy.logging.MessageConstants;
 import ch.kostceco.tools.kostsimy.service.TextResourceService;
 
 /** kostsimy -->
  * 
- * Der Controller ruft die benötigten Module zur Validierung der JPEG-Datei in der benötigten
+ * Der Controller ruft die benötigten Module zum Bildvergleich in der benötigten
  * Reihenfolge auf.
  * 
  * Die Validierungs-Module werden mittels Spring-Dependency-Injection eingebunden. */

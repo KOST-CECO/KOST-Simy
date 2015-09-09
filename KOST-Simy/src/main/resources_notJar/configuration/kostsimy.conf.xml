@@ -2,8 +2,8 @@
 <configuration>
 	<pathtologfile>logs</pathtologfile>
 	<pathtoworkdir>temp_KOST-Simy</pathtoworkdir>
+	<!--Stichprobengroesse (Zahl zwischen 1 und 100) wie viel Prozent verglichen werden soll -->
 	<randomtest>50</randomtest>
-	<pathtoimgcmpexe>C:\Software\ImageCompareCommandLine\imgcmp.exe</pathtoimgcmpexe>
-	<imgcmplicensekey>TrailVersion</imgcmplicensekey>
-	<imgcmptolerance>medium</imgcmptolerance>
+	<!--Toleranz (N: null Toleranz S: kleine Toleranz, M, L, bis XL grosse Toleranz) -->
+	<imtolerance>M</imtolerance>
 </configuration>

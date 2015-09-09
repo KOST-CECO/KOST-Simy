@@ -1,6 +1,6 @@
 /* == KOST-Simy =================================================================================
- * The KOST-Simy application is used for Compare TIFF, JPEG and PDF/A-Files. Copyright (C) 2015
- * Claire Röthlisberger (KOST-CECO)
+ * The KOST-Simy application is used for Compare Image-Files. Copyright (C) 2015 Claire
+ * Röthlisberger (KOST-CECO)
  * -----------------------------------------------------------------------------------------------
  * KOST-Simy is a development of the KOST-CECO. All rights rest with the KOST-CECO. This application
  * is free software: you can redistribute it and/or modify it under the terms of the GNU General
@@ -40,16 +40,30 @@ import com.itextpdf.text.pdf.parser.TextRenderInfo;
 
 public class PdfExtractJpegModuleImpl extends ComparisonModuleImpl implements PdfExtractJpegModule
 {
+	boolean												isFalse				= false;
 	boolean												isJPEG				= false;
+	boolean												isJPEGO				= false;
+	boolean												isJPEGR				= false;
 	boolean												isJPEGs				= false;
 	boolean												isCCITT				= false;
 	boolean												isJP2					= false;
+	boolean												isJP2O				= false;
+	boolean												isJP2R				= false;
+	boolean												isJP2s				= false;
 	boolean												isJBIG2				= false;
 
 	int														jpegCounter		= 0;
 	int														ccittCounter	= 0;
 	int														jp2Counter		= 0;
 	int														jbig2Counter	= 0;
+	int														jpegCounterO	= 0;
+	int														ccittCounterO	= 0;
+	int														jp2CounterO		= 0;
+	int														jbig2CounterO	= 0;
+	int														jpegCounterR	= 0;
+	int														ccittCounterR	= 0;
+	int														jp2CounterR		= 0;
+	int														jbig2CounterR	= 0;
 	private ConfigurationService	configurationService;
 
 	public static String					NEWLINE				= System.getProperty( "line.separator" );
@@ -71,6 +85,24 @@ public class PdfExtractJpegModuleImpl extends ComparisonModuleImpl implements Pd
 		boolean valid = true;
 		boolean validOrig = true;
 		boolean validRep = true;
+		isFalse = false;
+		isJPEGO = false;
+		isJPEGR = false;
+		isJPEGs = false;
+		isCCITT = false;
+		isJP2O = false;
+		isJP2R = false;
+		isJP2s = false;
+		isJBIG2 = false;
+
+		jpegCounterO = 0;
+		ccittCounterO = 0;
+		jp2CounterO = 0;
+		jbig2CounterO = 0;
+		jpegCounterR = 0;
+		ccittCounterR = 0;
+		jp2CounterR = 0;
+		jbig2CounterR = 0;
 
 		// Informationen zum Arbeitsverzeichnis holen
 		String pathToWorkDir = getConfigurationService().getPathToWorkDir();
@@ -80,15 +112,38 @@ public class PdfExtractJpegModuleImpl extends ComparisonModuleImpl implements Pd
 		File workDir = new File( pathToWorkDir );
 
 		String srcPdfOrig = origDatei.getAbsolutePath();
-		String destImageOrig = workDir.getAbsolutePath() + File.separator + origDatei.getName()
-				+ "_orig.jpg";
+		String destImageOrig = workDir.getAbsolutePath() + File.separator + "orig" + File.separator
+				+ origDatei.getName();
 		String srcPdfRep = repDatei.getAbsolutePath();
-		String destImageRep = workDir.getAbsolutePath() + File.separator + repDatei.getName()
-				+ "_rep.jpg";
-
+		String destImageRep = workDir.getAbsolutePath() + File.separator + "rep" + File.separator
+				+ repDatei.getName();
 		if ( srcPdfOrig.endsWith( "pdf" ) || srcPdfOrig.endsWith( "pdfa" ) ) {
+			jpegCounter = 0;
+			ccittCounter = 0;
+			jp2Counter = 0;
+			jbig2Counter = 0;
+			isJPEG = false;
+			isJPEGO = false;
+			isJPEGR = false;
+			isJP2 = false;
+			isJP2O = false;
+			isJP2R = false;
+
 			try {
 				extractImages( srcPdfOrig, destImageOrig );
+				jpegCounterO = jpegCounter;
+				ccittCounterO = ccittCounter;
+				jp2CounterO = jp2Counter;
+				jbig2CounterO = jbig2Counter;
+				jpegCounter = 0;
+				ccittCounter = 0;
+				jp2Counter = 0;
+				jbig2Counter = 0;
+				isJPEGO = isJPEG;
+				isJPEG = false;
+				isJP2O = isJP2;
+				isJP2 = false;
+
 			} catch ( DocumentException e ) {
 				getMessageService().logError(
 						getTextResourceService().getText( MESSAGE_XML_MODUL_PDF_EXTRACT )
@@ -102,8 +157,32 @@ public class PdfExtractJpegModuleImpl extends ComparisonModuleImpl implements Pd
 			}
 		}
 		if ( srcPdfRep.endsWith( "pdf" ) || srcPdfRep.endsWith( "pdfa" ) ) {
+			jpegCounter = 0;
+			ccittCounter = 0;
+			jp2Counter = 0;
+			jbig2Counter = 0;
+			isJPEG = false;
+			isJPEGO = false;
+			isJPEGR = false;
+			isJP2 = false;
+			isJP2O = false;
+			isJP2R = false;
+
 			try {
 				extractImages( srcPdfRep, destImageRep );
+				jpegCounterR = jpegCounter;
+				ccittCounterR = ccittCounter;
+				jp2CounterR = jp2Counter;
+				jbig2CounterR = jbig2Counter;
+				jpegCounter = 0;
+				ccittCounter = 0;
+				jp2Counter = 0;
+				jbig2Counter = 0;
+				isJPEGR = isJPEG;
+				isJPEG = false;
+				isJP2R = isJP2;
+				isJP2 = false;
+
 			} catch ( DocumentException e ) {
 				getMessageService().logError(
 						getTextResourceService().getText( MESSAGE_XML_MODUL_PDF_EXTRACT )
@@ -116,20 +195,38 @@ public class PdfExtractJpegModuleImpl extends ComparisonModuleImpl implements Pd
 				validRep = false;
 			}
 		}
-		if ( validOrig && validRep ) {
+		if ( validOrig && validRep && !isFalse ) {
 			// keine Exception
 			if ( isJPEGs ) {
 				// mehrere JPEGs in PDF vorhanden
 				getMessageService().logError(
 						getTextResourceService().getText( MESSAGE_XML_MODUL_PDF_EXTRACT )
-								+ getTextResourceService().getText( ERROR_XML_PDFA_JPEGS, jpegCounter ) );
+								+ getTextResourceService().getText( ERROR_XML_PDFA_JPEGS,
+										(jpegCounterO + jpegCounterR) ) );
 				valid = false;
 			}
-			if ( isJP2 ) {
-				// JP2 in PDF vorhanden
+			if ( isJP2s ) {
+				// mehrere JP2s in PDF vorhanden
 				getMessageService().logError(
 						getTextResourceService().getText( MESSAGE_XML_MODUL_PDF_EXTRACT )
-								+ getTextResourceService().getText( ERROR_XML_PDFA_JP2, jp2Counter ) );
+								+ getTextResourceService().getText( ERROR_XML_PDFA_JP2S,
+										(jp2CounterO + jp2CounterR) ) );
+				valid = false;
+			}
+			if ( isJPEGO && isJP2O ) {
+				// JPEG und JP" in PDF vorhanden
+				getMessageService().logError(
+						getTextResourceService().getText( MESSAGE_XML_MODUL_PDF_EXTRACT )
+								+ getTextResourceService().getText( ERROR_XML_PDFA_JPEGJP2, jpegCounterO,
+										jp2CounterO ) );
+				valid = false;
+			}
+			if ( isJPEGR && isJP2R ) {
+				// JPEG und JP" in PDF vorhanden
+				getMessageService().logError(
+						getTextResourceService().getText( MESSAGE_XML_MODUL_PDF_EXTRACT )
+								+ getTextResourceService().getText( ERROR_XML_PDFA_JPEGJP2, jpegCounterR,
+										jp2CounterR ) );
 				valid = false;
 			}
 			if ( isJBIG2 ) {
@@ -214,12 +311,21 @@ public class PdfExtractJpegModuleImpl extends ComparisonModuleImpl implements Pd
 					if ( PdfName.DCTDECODE.equals( filter ) ) {
 						if ( jpegCounter == 0 ) {
 							jpegCounter = jpegCounter + 1;
-							/* JPEG Bild: Das JPEG wird im Logverzeichnis wie vorgängig definiert gespeichert */
+							filenamePath = filenamePath + ".jpg";
+							File fl = new File( filenamePath );
+							/* JPEG Bild: Das JPEG wird wie vorgängig definiert gespeichert */
 							os = new FileOutputStream( filenamePath );
 							os.write( image.getImageAsBytes() );
 							os.flush();
 							os.close();
 							isJPEG = true;
+							if ( !fl.exists() ) {
+								getMessageService().logError(
+										getTextResourceService().getText( MESSAGE_XML_MODUL_PDF_EXTRACT )
+												+ getTextResourceService().getText( ERROR_XML_PDFA_JP2,
+														fl.getAbsolutePath() ) );
+								isFalse = true;
+							}
 						} else {
 							// es wurde bereits ein JPEG extrahiert
 							jpegCounter = jpegCounter + 1;
@@ -227,8 +333,28 @@ public class PdfExtractJpegModuleImpl extends ComparisonModuleImpl implements Pd
 						}
 					} else if ( PdfName.JPXDECODE.equals( filter ) ) {
 						// JP2-Bild
-						jp2Counter = jp2Counter + 1;
-						isJP2 = true;
+						if ( jp2Counter == 0 ) {
+							jp2Counter = jp2Counter + 1;
+							filenamePath = filenamePath + ".jp2";
+							File fl = new File( filenamePath );
+							/* JPEG2000 Bild: Das JPEG2000 wird wie vorgängig definiert gespeichert */
+							os = new FileOutputStream( filenamePath );
+							os.write( image.getImageAsBytes() );
+							os.flush();
+							os.close();
+							isJP2 = true;
+							if ( !fl.exists() ) {
+								getMessageService().logError(
+										getTextResourceService().getText( MESSAGE_XML_MODUL_PDF_EXTRACT )
+												+ getTextResourceService().getText( ERROR_XML_PDFA_JP2,
+														fl.getAbsolutePath() ) );
+								isFalse = true;
+							}
+						} else {
+							// es wurde bereits ein JPEG2000 extrahiert
+							jp2Counter = jp2Counter + 1;
+							isJP2s = true;
+						}
 					} else if ( PdfName.JBIG2DECODE.equals( filter ) ) {
 						// JBIG2-Bild
 						jbig2Counter = jbig2Counter + 1;
