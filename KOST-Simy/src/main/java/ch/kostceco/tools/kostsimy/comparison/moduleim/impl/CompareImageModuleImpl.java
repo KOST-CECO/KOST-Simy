@@ -55,6 +55,8 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 		// boolean isValidFailed = false;
 		boolean compResult = false;
 		int allInt = 0;
+		boolean allNoInt = false;
+		String allStr = "";
 
 		// Initialisierung ImageMagick -> überprüfen der Angaben: existiert die compare.exe am angebenen
 		// Ort?
@@ -82,7 +84,7 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 		} else if ( imToleranceTxt.equalsIgnoreCase( "S" ) ) {
 			// small = 2%
 			imTolerance = "2%";
-			percentageInvalid = (float) 99.999999;
+			percentageInvalid = (float) 99.9999;
 		} else if ( imToleranceTxt.equalsIgnoreCase( "L" ) ) {
 			// large = 10%
 			imTolerance = "10%";
@@ -90,12 +92,12 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 		} else if ( imToleranceTxt.equalsIgnoreCase( "XL" ) ) {
 			// xlarge = 15%
 			imTolerance = "15%";
-			percentageInvalid = (float) 99.99;
+			percentageInvalid = (float) 99.9;
 		} else {
 			// medium = 5%
 			imTolerance = "5%";
 			imToleranceTxt = "M";
-			percentageInvalid = (float) 99.9999;
+			percentageInvalid = (float) 99.999;
 		}
 		String pathToCompareExe = fCompareExe.getAbsolutePath();
 
@@ -113,13 +115,11 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 			String pathToMask = directoryOfLogfile.getAbsolutePath() + File.separator
 					+ origDatei.getName() + "_mask.jpg";
 
-			/* compare -fuzz 15% -metric AE -quiet -identify -verbose -highlight-color DarkMagenta
-			 * Image_1.jpg Image_2.jpg mask.jpg >>results_id.txt 2>results.txt */
-			// String command =
-			// "resources\\ImageMagick-6.9.2-Q16\\Compare.exe -fuzz 5% -metric AE -quiet -identify -verbose -highlight-color DarkMagenta C:\\TEMP\\tiff2pdfa2\\palazzo_3.jpg C:\\TEMP\\tiff2pdfa2\\palazzo.jpg logs\\palazzo_3.jpg_mask.jpg >>logs\\palazzo_3.jpg_identify_report.txt 2>logs\\palazzo_3.jpg_compare_report.txt";
+			/* compare -fuzz 15% -metric AE -quiet -identify -verbose -highlight-color DarkRed Image_1.jpg
+			 * Image_2.jpg mask.jpg >>results_id.txt 2>results.txt */
 
 			String command = "cmd /c \"" + pathToCompareExe + " -fuzz " + imTolerance
-					+ " -metric AE -quiet -identify -verbose -highlight-color DarkMagenta \""
+					+ " -metric AE -quiet -identify -verbose -highlight-color DarkRed \""
 					+ origDatei.getAbsolutePath() + "\" " + "\"" + repDatei.getAbsolutePath() + "\" \""
 					+ pathToMask + "\" >>" + pathToOutputId + " 2>" + pathToOutput + "\"";
 			/* Das redirect Zeichen verunmöglicht eine direkte eingabe. mit dem geschachtellten Befehl
@@ -216,18 +216,20 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 					 * 
 					 * in den ersten zwei zeilen sind die eigenschaften der beiden Bilder enthalten
 					 * 
-					 * Danach die Anzahl Pixel mit einer grösseren Abweichung aus, einerseits für Grau und
-					 * allg.
-					 * 
-					 * 0= vergleichbar */
+					 * Danach die Anzahl Pixel mit einer grösseren Abweichung aus, allg: 0= vergleichbar */
 					if ( line.contains( " all: " ) ) {
 						if ( line.contains( " all: 0" ) ) {
 							allNull = true;
 						} else {
 							/* Invalide Px extrahieren "    all: 3563" extrahieren */
 							String lineReportAll = line.substring( 9 );
-							// lineReport = 3563
-							allInt = Integer.parseInt( lineReportAll );
+							try {
+								// lineReport = 3563
+								allInt = Integer.parseInt( lineReportAll );
+							} catch ( Exception e ) {
+								allNoInt = true;
+								allStr = lineReportAll;
+							}
 						}
 					}
 
@@ -305,34 +307,51 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 			}
 			if ( !compResult ) {
 				// Bildvergleich nicht bestanden
+				if ( allNoInt ) {
+					/* Bilder mit vielen Pixels die Abweichen (Potenz -> String): Vereinfachte Fehlerausgabe */
+					double z2 = 0;
 
-				/* Bilder mit einer Abweichung: Prozent ermitteln und mit percentageInvalid abgleichen */
-				double z1 = 0;
-				double z2 = 0;
-				float percentageCalc = (float) 0.0;
-				float percentageCalcInv = (float) 0.0;
+					/* Invalide [allStr] und total px z2 aus imgPx1 "    Pixels: 8809392" extrahieren */
+					String lineReport = imgPx1.substring( 12 );
+					// lineReport = 8809392
+					z2 = Double.parseDouble( lineReport );
 
-				/* Invalide z1 [allInt] und total px z2 aus imgPx1 "    Pixels: 8809392" extrahieren */
-				String lineReport = imgPx1.substring( 12 );
-				// lineReport = 8809392
-				z2 = Double.parseDouble( lineReport );
-				z1 = allInt;
-
-				percentageCalc = (float) (100 - (100 / z2 * z1));
-				percentageCalcInv = 100 - percentageCalc;
-
-				// Prozetzahlen vergleichen
-				if ( percentageInvalid > percentageCalc ) {
-					// Bilder mit einer grösseren Abweichung
 					isValid = false;
 
 					getMessageService().logError(
 							getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
-									+ getTextResourceService().getText( ERROR_XML_CI_CIINVALID, percentageCalcInv,
-											z2, imToleranceTxt, z1 ) );
+									+ getTextResourceService().getText( ERROR_XML_CI_CIINVALIDSTR, z2,
+											imToleranceTxt, allStr ) );
+
+				} else {
+					/* Bilder mit einer Abweichung (Int): Prozent ermitteln und mit percentageInvalid
+					 * abgleichen */
+					double z1 = 0;
+					double z2 = 0;
+					float percentageCalc = (float) 0.0;
+					float percentageCalcInv = (float) 0.0;
+
+					/* Invalide z1 [allInt] und total px z2 aus imgPx1 "    Pixels: 8809392" extrahieren */
+					String lineReport = imgPx1.substring( 12 );
+					// lineReport = 8809392
+					z2 = Double.parseDouble( lineReport );
+					z1 = allInt;
+
+					percentageCalc = (float) (100 - (100 / z2 * z1));
+					percentageCalcInv = 100 - percentageCalc;
+
+					// Prozetzahlen vergleichen
+					if ( percentageInvalid > percentageCalc ) {
+						// Bilder mit einer grösseren Abweichung
+						isValid = false;
+
+						getMessageService().logError(
+								getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
+										+ getTextResourceService().getText( ERROR_XML_CI_CIINVALID, percentageCalcInv,
+												z2, imToleranceTxt, z1 ) );
+					}
 				}
 			}
-
 			in.close();
 		} catch ( Exception e ) {
 			getMessageService().logError(

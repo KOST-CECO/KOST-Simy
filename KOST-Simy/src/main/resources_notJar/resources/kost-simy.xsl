@@ -82,26 +82,41 @@
 					<xsl:if test="Dissimilar">
 						<div>
 							<table width="100%">
-								<tr class="caption">
-									<td>
-										<xsl:value-of select="ValType" />
-										<xsl:value-of select="PdfaVL" />
-										->
-										<xsl:value-of select="ValFile" />
+								<tr class="captionm">
+									<td width="80%" valign="top">
+										<table width="100%">
+											<tr class="caption">
+												<td>
+													<xsl:value-of select="ValType" />
+													<xsl:value-of select="PdfaVL" />
+													->
+													<xsl:value-of select="ValFile" />
+												</td>
+											</tr>
+										</table>
+										<table width="100%">
+											<xsl:for-each select="Error">
+												<tr class="captionm">
+													<td width="25%" valign="top">
+														<xsl:value-of select="Modul" />
+													</td>
+													<td width="75%" valign="top"> 
+														<table width="100%">
+															<xsl:for-each select="Message">
+																<tr class="captionm">
+																	<xsl:value-of select="." />
+																</tr>
+															</xsl:for-each>
+														</table>
+													</td>
+												</tr>
+											</xsl:for-each>
+										</table>
+									</td>
+									<td width="20%">
+										<a href="{Mask}" target="_blank"> <img src="{Mask}" alt="" title="Click to view" border="0" width="100"  /></a>
 									</td>
 								</tr>
-							</table>
-							<table width="100%">
-								<xsl:for-each select="Error">
-									<tr class="captionm">
-										<td width="25%">
-											<xsl:value-of select="Modul" />
-										</td>
-										<td width="75%">
-											<xsl:value-of select="Message" />
-										</td>
-									</tr>
-								</xsl:for-each>
 							</table>
 						</div>
 						<br />

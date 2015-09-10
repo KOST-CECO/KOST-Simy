@@ -768,8 +768,11 @@ public class KOSTSimy implements MessageConstants
 				if ( reportImId.exists() ) {
 					Util.deleteDir( reportImId );
 				}
+				File maskImgcmp = new File( directoryOfLogfile.getAbsolutePath() + File.separator
+						+ origDir.getName() + "_mask.jpg" );
+
 				LOGGER.logError( kostsimy.getTextResourceService()
-						.getText( MESSAGE_XML_VALERGEBNIS_INVALID ) );
+						.getText( MESSAGE_XML_VALERGEBNIS_INVALID, maskImgcmp.getName()  ) );
 				LOGGER
 						.logError( kostsimy.getTextResourceService().getText( MESSAGE_XML_VALERGEBNIS_CLOSE ) );
 				System.out.println( "Dissimilar" );
