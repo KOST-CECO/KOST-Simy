@@ -77,22 +77,26 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 			return false;
 		}
 
-		if ( imToleranceTxt.equalsIgnoreCase( "N" ) ) {
+		if ( imToleranceTxt.contains( "N" ) || imToleranceTxt.contains( "n" ) ) {
 			// null = 0%
 			imTolerance = "0%";
 			percentageInvalid = (float) 100.000000000;
-		} else if ( imToleranceTxt.equalsIgnoreCase( "S" ) ) {
+			imToleranceTxt = "N";
+		} else if ( imToleranceTxt.contains( "S" ) || imToleranceTxt.contains( "s" ) ) {
 			// small = 2%
 			imTolerance = "2%";
 			percentageInvalid = (float) 99.9999;
-		} else if ( imToleranceTxt.equalsIgnoreCase( "L" ) ) {
+			imToleranceTxt = "S";
+		} else if ( imToleranceTxt.contains( "L" ) || imToleranceTxt.contains( "L" ) ) {
 			// large = 10%
 			imTolerance = "10%";
 			percentageInvalid = (float) 99.99;
-		} else if ( imToleranceTxt.equalsIgnoreCase( "XL" ) ) {
+			imToleranceTxt = "L";
+		} else if ( imToleranceTxt.contains( "XL" ) || imToleranceTxt.contains( "xl" ) ) {
 			// xlarge = 15%
 			imTolerance = "15%";
 			percentageInvalid = (float) 99.9;
+			imToleranceTxt = "XL";
 		} else {
 			// medium = 5%
 			imTolerance = "5%";
@@ -118,10 +122,10 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 			/* compare -fuzz 15% -metric AE -quiet -identify -verbose -highlight-color DarkRed Image_1.jpg
 			 * Image_2.jpg mask.jpg >>results_id.txt 2>results.txt */
 
-			String command = "cmd /c \"" + pathToCompareExe + " -fuzz " + imTolerance
+			String command = "cmd /c \"\"" + pathToCompareExe + "\" -fuzz " + imTolerance
 					+ " -metric AE -quiet -identify -verbose -highlight-color DarkRed \""
-					+ origDatei.getAbsolutePath() + "\" " + "\"" + repDatei.getAbsolutePath() + "\" \""
-					+ pathToMask + "\" >>" + pathToOutputId + " 2>" + pathToOutput + "\"";
+					+ origDatei.getAbsolutePath() + "\" \"" + repDatei.getAbsolutePath() + "\" \""
+					+ pathToMask + "\" >>\"" + pathToOutputId + "\" 2>\"" + pathToOutput + "\"";
 			/* Das redirect Zeichen verunmöglicht eine direkte eingabe. mit dem geschachtellten Befehl
 			 * gehts: cmd /c\"urspruenlicher Befehl\" */
 
@@ -158,6 +162,28 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 				proc.waitFor();
 
 				Util.switchOnConsole();
+				// Kontrolle ob die Reports existieren
+				if ( !report.exists() ) {
+					getMessageService().logError(
+							getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
+									+ getTextResourceService().getText( ERROR_XML_IMCMP_NOREPORT,
+											report.getAbsolutePath() ) );
+					if ( !reportId.exists() ) {
+						getMessageService().logError(
+								getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
+										+ getTextResourceService().getText( ERROR_XML_IMCMP_NOREPORT,
+												reportId.getAbsolutePath() ) );
+						return false;
+					}
+					return false;
+				}
+				if ( !reportId.exists() ) {
+					getMessageService().logError(
+							getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
+									+ getTextResourceService().getText( ERROR_XML_IMCMP_NOREPORT,
+											reportId.getAbsolutePath() ) );
+					return false;
+				}
 			} catch ( Exception e ) {
 				getMessageService()
 						.logError(
@@ -202,6 +228,7 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 				BufferedReader in = new BufferedReader( new FileReader( report ) );
 				String line;
 				boolean allNull = false;
+				boolean allExist = false;
 
 				while ( (line = in.readLine()) != null ) {
 
@@ -221,6 +248,7 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 						if ( line.contains( " all: 0" ) ) {
 							allNull = true;
 						} else {
+							allExist = true;
 							/* Invalide Px extrahieren "    all: 3563" extrahieren */
 							String lineReportAll = line.substring( 9 );
 							try {
@@ -238,10 +266,17 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 					}
 				}
 				in.close();
+				if ( !allExist ) {
+					getMessageService().logError(
+							getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
+									+ getTextResourceService().getText( ERROR_XML_IMCMP_NOALL ) );
+					return false;
+				}
 			} catch ( Exception e ) {
 				getMessageService().logError(
 						getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
-								+ getTextResourceService().getText( ERROR_XML_UNKNOWN, e.getMessage() ) );
+								+ getTextResourceService()
+										.getText( ERROR_XML_UNKNOWN, "compare: " + e.getMessage() ) );
 				return false;
 			}
 		} catch ( Exception e ) {
@@ -289,7 +324,7 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 					}
 				}
 
-				// TODO: Marker: Auwertung und Fehlerausgabe wenn nicht bestanden.
+				// TODO: Marker: Auswertung und Fehlerausgabe wenn nicht bestanden.
 			}
 			if ( !imgPx1.equals( imgPx2 ) ) {
 				// die beiden Bilder haben nicht gleich viel Pixels
@@ -309,18 +344,16 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 				// Bildvergleich nicht bestanden
 				if ( allNoInt ) {
 					/* Bilder mit vielen Pixels die Abweichen (Potenz -> String): Vereinfachte Fehlerausgabe */
-					double z2 = 0;
 
 					/* Invalide [allStr] und total px z2 aus imgPx1 "    Pixels: 8809392" extrahieren */
 					String lineReport = imgPx1.substring( 12 );
 					// lineReport = 8809392
-					z2 = Double.parseDouble( lineReport );
 
 					isValid = false;
 
 					getMessageService().logError(
 							getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
-									+ getTextResourceService().getText( ERROR_XML_CI_CIINVALIDSTR, z2,
+									+ getTextResourceService().getText( ERROR_XML_CI_CIINVALIDSTR, lineReport,
 											imToleranceTxt, allStr ) );
 
 				} else {
@@ -340,7 +373,7 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 					percentageCalc = (float) (100 - (100 / z2 * z1));
 					percentageCalcInv = 100 - percentageCalc;
 
-					// Prozetzahlen vergleichen
+					// Prozentzahlen vergleichen
 					if ( percentageInvalid > percentageCalc ) {
 						// Bilder mit einer grösseren Abweichung
 						isValid = false;
@@ -354,9 +387,11 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 			}
 			in.close();
 		} catch ( Exception e ) {
-			getMessageService().logError(
-					getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
-							+ getTextResourceService().getText( ERROR_XML_UNKNOWN, e.getMessage() ) );
+			getMessageService()
+					.logError(
+							getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
+									+ getTextResourceService().getText( ERROR_XML_UNKNOWN,
+											"identify: " + e.getMessage() ) );
 			return false;
 		}
 		// reports löschen

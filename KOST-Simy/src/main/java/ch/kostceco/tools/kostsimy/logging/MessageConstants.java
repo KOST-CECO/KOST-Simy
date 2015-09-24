@@ -85,6 +85,7 @@ public interface MessageConstants
 	String	ERROR_XML_IMCMP_MISSING								= "error.xml.imcmp.missing";
 	String	ERROR_XML_IMCMP_SERVICEFAILED					= "error.xml.imcmp.servicefailed";
 	String	ERROR_XML_IMCMP_NOREPORT							= "error.xml.imcmp.noreport";
+	String	ERROR_XML_IMCMP_NOALL									= "error.xml.imcmp.noall";
 	String	ERROR_XML_CI_CIINVALID								= "error.xml.ci.ciinvalid";
 	String	ERROR_XML_CI_CIINVALIDSTR							= "error.xml.ci.ciinvalidstr";
 	String	ERROR_XML_CI_SIZEINVALID							= "error.xml.ci.sizeinvalid";
