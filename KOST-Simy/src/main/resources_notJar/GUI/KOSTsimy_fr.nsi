@@ -1,5 +1,5 @@
 ; The name of the installer
-Name "KOST-Simy v0.0.5"
+Name "KOST-Simy v0.0.6"
 ; Sets the icon of the installer
 Icon "simy.ico"
 ; remove the text 'Nullsoft Install System vX.XX' from the installer window 
@@ -30,7 +30,7 @@ XPStyle on
 !define CONFIG        "KOSTsimy.conf.xml"
 !define CONFIGPATH    "configuration"
 !define BACKUP        "~backup"
-!define JARFILE       "kostsimy_de.jar"
+!define JARFILE       "kostsimy_fr.jar"
 !define XTRANS        "resources\XTrans_1.8.0.2\XTrans.exe"
 !define JAVAPATH      "resources\jre6"
 

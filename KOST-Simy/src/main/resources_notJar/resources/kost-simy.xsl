@@ -104,7 +104,9 @@
 														<table width="100%">
 															<xsl:for-each select="Message">
 																<tr class="captionm">
-																	<xsl:value-of select="." />
+																	<td width="100%" valign="top">
+																		<xsl:value-of select="." />
+																	</td>
 																</tr>
 															</xsl:for-each>
 														</table>

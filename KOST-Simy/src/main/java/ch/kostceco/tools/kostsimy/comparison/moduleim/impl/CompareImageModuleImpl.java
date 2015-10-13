@@ -87,16 +87,16 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 			imTolerance = "2%";
 			percentageInvalid = (float) 99.9999;
 			imToleranceTxt = "S";
-		} else if ( imToleranceTxt.contains( "L" ) || imToleranceTxt.contains( "L" ) ) {
-			// large = 10%
-			imTolerance = "10%";
-			percentageInvalid = (float) 99.99;
-			imToleranceTxt = "L";
 		} else if ( imToleranceTxt.contains( "XL" ) || imToleranceTxt.contains( "xl" ) ) {
 			// xlarge = 15%
 			imTolerance = "15%";
 			percentageInvalid = (float) 99.9;
 			imToleranceTxt = "XL";
+		} else if ( imToleranceTxt.contains( "L" ) || imToleranceTxt.contains( "l" ) ) {
+			// large = 10%
+			imTolerance = "10%";
+			percentageInvalid = (float) 99.99;
+			imToleranceTxt = "L";
 		} else {
 			// medium = 5%
 			imTolerance = "5%";
@@ -107,6 +107,7 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 
 		File report;
 		File reportId;
+		String imgPx1 = "1";
 
 		StringBuffer concatenatedOutputs = new StringBuffer();
 
@@ -223,7 +224,77 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 
 			// Ende IMCMP direkt auszulösen
 
-			// TODO: Marker: Report auswerten (Bildvergleich)
+			// TODO: Marker: ReportId und auswerten (Grösse und der Pixel)
+			try {
+				BufferedReader in = new BufferedReader( new FileReader( reportId ) );
+				String line;
+				String imgSize1 = "1";
+				String imgSize2 = "1";
+				String imgPx2 = "1";
+
+				while ( (line = in.readLine()) != null ) {
+
+					concatenatedOutputs.append( line );
+					concatenatedOutputs.append( NEWLINE );
+
+					/* Format: TIFF (Tagged Image File Format) Mime type: image/tiff
+					 * 
+					 * Geometry: 2469x3568+0+0
+					 * 
+					 * Channel statistics:
+					 * 
+					 * Pixels: 8809392
+					 * 
+					 * Geometry und Pixels scheinen immer ausgegeben zu werden
+					 * 
+					 * Gemotry und Pixels müssen identisch sein */
+					if ( line.contains( "  Geometry: " ) ) {
+						if ( imgSize1.equals( "1" ) ) {
+							imgSize1 = line;
+						} else {
+							imgSize2 = line;
+						}
+					} else if ( line.contains( "  Pixels: " ) ) {
+						if ( imgPx1.equals( "1" ) ) {
+							imgPx1 = line;
+						} else {
+							imgPx2 = line;
+						}
+					}
+
+					// TODO: Marker: Auswertung und Fehlerausgabe wenn nicht bestanden.
+				}
+				if ( !imgPx1.equals( imgPx2 ) ) {
+					// die beiden Bilder haben nicht gleich viel Pixels
+					isValid = false;
+					getMessageService().logError(
+							getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
+									+ getTextResourceService().getText( ERROR_XML_CI_PIXELINVALID, imgPx1, imgPx2 ) );
+				}
+				if ( !imgSize1.equals( imgSize2 ) ) {
+					// die beiden Bilder sind nicht gleich gross
+					isValid = false;
+					getMessageService()
+							.logError(
+									getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
+											+ getTextResourceService().getText( ERROR_XML_CI_SIZEINVALID, imgSize1,
+													imgSize2 ) );
+				}
+				if ( !isValid ) {
+					// die beiden Bilder sind nicht gleich gross
+					in.close();
+					return false;
+				}
+				in.close();
+			} catch ( Exception e ) {
+				getMessageService().logError(
+						getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
+								+ getTextResourceService().getText( ERROR_XML_UNKNOWN,
+										"identify: " + e.getMessage() ) );
+				return false;
+			}
+
+			// TODO: Marker: Report auswerten (Bildvergleich) wenn grösse & PixelAnzahl identisch
 			try {
 				BufferedReader in = new BufferedReader( new FileReader( report ) );
 				String line;
@@ -245,10 +316,10 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 					 * 
 					 * Danach die Anzahl Pixel mit einer grösseren Abweichung aus, allg: 0= vergleichbar */
 					if ( line.contains( " all: " ) ) {
+						allExist = true;
 						if ( line.contains( " all: 0" ) ) {
 							allNull = true;
 						} else {
-							allExist = true;
 							/* Invalide Px extrahieren "    all: 3563" extrahieren */
 							String lineReportAll = line.substring( 9 );
 							try {
@@ -272,6 +343,51 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 									+ getTextResourceService().getText( ERROR_XML_IMCMP_NOALL ) );
 					return false;
 				}
+				if ( !compResult ) {
+					// Bildvergleich nicht bestanden
+					if ( allNoInt ) {
+						/* Bilder mit vielen Pixels die Abweichen (Potenz -> String): Vereinfachte Fehlerausgabe */
+
+						/* Invalide [allStr] und total px z2 aus imgPx1 "    Pixels: 8809392" extrahieren */
+						String lineReport = imgPx1.substring( 12 );
+						// lineReport = 8809392
+
+						isValid = false;
+
+						getMessageService().logError(
+								getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
+										+ getTextResourceService().getText( ERROR_XML_CI_CIINVALIDSTR, lineReport,
+												imToleranceTxt, allStr ) );
+
+					} else {
+						/* Bilder mit einer Abweichung (Int): Prozent ermitteln und mit percentageInvalid
+						 * abgleichen */
+						double z1 = 0;
+						double z2 = 0;
+						float percentageCalc = (float) 0.0;
+						float percentageCalcInv = (float) 0.0;
+
+						/* Invalide z1 [allInt] und total px z2 aus imgPx1 "    Pixels: 8809392" extrahieren */
+						String lineReport = imgPx1.substring( 12 );
+						// lineReport = 8809392
+						z2 = Double.parseDouble( lineReport );
+						z1 = allInt;
+
+						percentageCalc = (float) (100 - (100 / z2 * z1));
+						percentageCalcInv = 100 - percentageCalc;
+
+						// Prozentzahlen vergleichen
+						if ( percentageInvalid > percentageCalc ) {
+							// Bilder mit einer grösseren Abweichung
+							isValid = false;
+
+							getMessageService().logError(
+									getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
+											+ getTextResourceService().getText( ERROR_XML_CI_CIINVALID,
+													percentageCalcInv, z2, imToleranceTxt, z1 ) );
+						}
+					}
+				}
 			} catch ( Exception e ) {
 				getMessageService().logError(
 						getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
@@ -285,115 +401,7 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 							+ getTextResourceService().getText( ERROR_XML_UNKNOWN, e.getMessage() ) );
 			return false;
 		}
-		// TODO: Marker: ReportId und auswerten (Grösse und der Pixel)
-		try {
-			BufferedReader in = new BufferedReader( new FileReader( reportId ) );
-			String line;
-			String imgSize1 = "1";
-			String imgSize2 = "1";
-			String imgPx1 = "1";
-			String imgPx2 = "1";
 
-			while ( (line = in.readLine()) != null ) {
-
-				concatenatedOutputs.append( line );
-				concatenatedOutputs.append( NEWLINE );
-
-				/* Format: TIFF (Tagged Image File Format) Mime type: image/tiff
-				 * 
-				 * Geometry: 2469x3568+0+0
-				 * 
-				 * Channel statistics:
-				 * 
-				 * Pixels: 8809392
-				 * 
-				 * Geometry und Pixels scheinen immer ausgegeben zu werden
-				 * 
-				 * Gemotry und Pixels müssen identisch sein */
-				if ( line.contains( "  Geometry: " ) ) {
-					if ( imgSize1.equals( "1" ) ) {
-						imgSize1 = line;
-					} else {
-						imgSize2 = line;
-					}
-				} else if ( line.contains( "  Pixels: " ) ) {
-					if ( imgPx1.equals( "1" ) ) {
-						imgPx1 = line;
-					} else {
-						imgPx2 = line;
-					}
-				}
-
-				// TODO: Marker: Auswertung und Fehlerausgabe wenn nicht bestanden.
-			}
-			if ( !imgPx1.equals( imgPx2 ) ) {
-				// die beiden Bilder haben nicht gleich viel Pixels
-				isValid = false;
-				getMessageService().logError(
-						getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
-								+ getTextResourceService().getText( ERROR_XML_CI_PIXELINVALID, imgPx1, imgPx2 ) );
-			}
-			if ( !imgSize1.equals( imgSize2 ) ) {
-				// die beiden Bilder sind nicht gleich gross
-				isValid = false;
-				getMessageService().logError(
-						getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
-								+ getTextResourceService().getText( ERROR_XML_CI_SIZEINVALID, imgSize1, imgSize2 ) );
-			}
-			if ( !compResult ) {
-				// Bildvergleich nicht bestanden
-				if ( allNoInt ) {
-					/* Bilder mit vielen Pixels die Abweichen (Potenz -> String): Vereinfachte Fehlerausgabe */
-
-					/* Invalide [allStr] und total px z2 aus imgPx1 "    Pixels: 8809392" extrahieren */
-					String lineReport = imgPx1.substring( 12 );
-					// lineReport = 8809392
-
-					isValid = false;
-
-					getMessageService().logError(
-							getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
-									+ getTextResourceService().getText( ERROR_XML_CI_CIINVALIDSTR, lineReport,
-											imToleranceTxt, allStr ) );
-
-				} else {
-					/* Bilder mit einer Abweichung (Int): Prozent ermitteln und mit percentageInvalid
-					 * abgleichen */
-					double z1 = 0;
-					double z2 = 0;
-					float percentageCalc = (float) 0.0;
-					float percentageCalcInv = (float) 0.0;
-
-					/* Invalide z1 [allInt] und total px z2 aus imgPx1 "    Pixels: 8809392" extrahieren */
-					String lineReport = imgPx1.substring( 12 );
-					// lineReport = 8809392
-					z2 = Double.parseDouble( lineReport );
-					z1 = allInt;
-
-					percentageCalc = (float) (100 - (100 / z2 * z1));
-					percentageCalcInv = 100 - percentageCalc;
-
-					// Prozentzahlen vergleichen
-					if ( percentageInvalid > percentageCalc ) {
-						// Bilder mit einer grösseren Abweichung
-						isValid = false;
-
-						getMessageService().logError(
-								getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
-										+ getTextResourceService().getText( ERROR_XML_CI_CIINVALID, percentageCalcInv,
-												z2, imToleranceTxt, z1 ) );
-					}
-				}
-			}
-			in.close();
-		} catch ( Exception e ) {
-			getMessageService()
-					.logError(
-							getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
-									+ getTextResourceService().getText( ERROR_XML_UNKNOWN,
-											"identify: " + e.getMessage() ) );
-			return false;
-		}
 		// reports löschen
 		if ( report.exists() ) {
 			report.delete();

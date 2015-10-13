@@ -29,11 +29,9 @@ public interface MessageConstants
 	String	ERROR_WORKDIRECTORY_NOTDELETABLE			= "error.workdirectory.notdeletable";
 	String	ERROR_WORKDIRECTORY_NOTWRITABLE				= "error.workdirectory.notwritable";
 	String	ERROR_WORKDIRECTORY_EXISTS						= "error.workdirectory.exists";
-	String	ERROR_VALFILE_FILENOTEXISTING					= "error.valfile.filenotexisting";
 	String	ERROR_LOGGING_NOFILEAPPENDER					= "error.logging.nofileappender";
 	String	ERROR_INCORRECTFILEENDING							= "error.incorrectfileending";
 	String	ERROR_INCORRECTFILEENDINGS						= "error.incorrectfileendings";
-	String	ERROR_NOFILEENDINGS										= "error.nofileendings";
 	String	ERROR_NOREP														= "error.norep";
 	String	ERROR_NOORIGDIR												= "error.noorigdir";
 	String	ERROR_NOREPDIR1												= "error.norepdir1";
@@ -46,7 +44,6 @@ public interface MessageConstants
 	String	MESSAGE_XML_HEADER										= "message.xml.header";
 	String	MESSAGE_XML_START											= "message.xml.start";
 	String	MESSAGE_XML_END												= "message.xml.end";
-	String	MESSAGE_XML_FORMATON									= "message.xml.formaton";
 	String	MESSAGE_XML_INFO											= "message.xml.info";
 	String	MESSAGE_COMPARISON										= "message.comparison";
 	String	MESSAGE_XML_COMPFILES									= "message.compfiles";
@@ -54,6 +51,7 @@ public interface MessageConstants
 	String	MESSAGE_XML_VALERGEBNIS								= "message.xml.valergebnis";
 	String	MESSAGE_XML_VALTYPE										= "message.xml.valtype";
 	String	MESSAGE_XML_STATISTICS								= "message.xml.statistics";
+	
 	String	MESSAGE_XML_IMAGE1										= "message.xml.image1";
 	String	MESSAGE_XML_IMAGE2										= "message.xml.image2";
 	String	MESSAGE_XML_LOGEND										= "message.xml.logend";

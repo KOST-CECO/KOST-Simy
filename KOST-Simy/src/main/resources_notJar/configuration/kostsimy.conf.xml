@@ -3,7 +3,7 @@
 	<pathtologfile>logs</pathtologfile>
 	<pathtoworkdir>temp_KOST-Simy</pathtoworkdir>
 	<!--Stichprobengroesse (Zahl zwischen 1 und 100) wie viel Prozent verglichen werden soll -->
-	<randomtest>50</randomtest>
+	<randomtest>100</randomtest>
 	<!--Toleranz (N, S, M, L, XL)
 	N: Null Toleranz -> Pixelidentische Bilder
 	S: Kleine Toleranz -> Optisch identische Bilder
