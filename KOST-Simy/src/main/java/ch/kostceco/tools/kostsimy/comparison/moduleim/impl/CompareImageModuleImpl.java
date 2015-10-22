@@ -58,8 +58,6 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 		boolean allNoInt = false;
 		String allStr = "";
 
-		// Initialisierung ImageMagick -> überprüfen der Angaben: existiert die compare.exe am angebenen
-		// Ort?
 		String imToleranceTxt = getConfigurationService().getImTolerance();
 		String imTolerance = "5%";
 		float percentageInvalid = 99.9999f;
@@ -67,13 +65,55 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 		 * entsprechenden Modul die property anzugeben: <property name="configurationService"
 		 * ref="configurationService" /> */
 
-		File fCompareExe = new File( "resources" + File.separator + "ImageMagickCompare-6.9.1-Q16"
-				+ File.separator + "Compare.exe" );
+		/* Initialisierung ImageMagick -> überprüfen der Angaben: existiert die compare.exe,
+		 * msvcp120.dll, msvcr120.dll, vcomp120.dll am vorgegebenen Ort? */
+		String compareExe= "compare.exe";
+		String msvcp120Dll = "msvcp120.dll";
+		String msvcr120Dll = "msvcr120.dll";
+		String vcomp120Dll= "vcomp120.dll";
+		String im= "resources" + File.separator + "ImageMagickCompare-6.9.1-Q16";
+		boolean imExist=true;
+		File fCompareExe = new File( im
+				+ File.separator + compareExe );
 		if ( !fCompareExe.exists() ) {
 			// Compare.exe von ImageMagick existiert nicht, kein Vergleich --> Abbruch
 			getMessageService().logError(
 					getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
-							+ getTextResourceService().getText( ERROR_XML_IMCMP_MISSING ) );
+							+ getTextResourceService().getText( ERROR_XML_IMCMP_MISSING, compareExe ) );
+			imExist= false;
+		}
+		File fMsvcp120Dll = new File( im
+				+ File.separator + msvcp120Dll );
+		if ( !fMsvcp120Dll.exists() ) {
+			// msvcp120.dll von ImageMagick existiert nicht, kein Vergleich --> Abbruch
+			getMessageService().logError(
+					getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
+							+ getTextResourceService().getText( ERROR_XML_IMCMP_MISSING, msvcp120Dll ) );
+			imExist= false;
+		}
+		File fMsvcr120Dll = new File( im
+				+ File.separator + msvcr120Dll );
+		if ( !fMsvcr120Dll.exists() ) {
+			// msvcr120.dll von ImageMagick existiert nicht, kein Vergleich --> Abbruch
+			getMessageService().logError(
+					getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
+							+ getTextResourceService().getText( ERROR_XML_IMCMP_MISSING, msvcr120Dll ) );
+			imExist= false;
+		}
+		File fVcomp120Dll = new File( im
+				+ File.separator + vcomp120Dll );
+		if ( !fVcomp120Dll.exists() ) {
+			// vcomp120.dll von ImageMagick existiert nicht, kein Vergleich --> Abbruch
+			getMessageService().logError(
+					getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
+							+ getTextResourceService().getText( ERROR_XML_IMCMP_MISSING, vcomp120Dll ) );
+			imExist= false;
+		}
+		if ( !imExist ) {
+			// compare.exe/msvcp120.dll/msvcr120.dll/vcomp120.dll von ImageMagick existiert nicht --> Abbruch
+			getMessageService().logError(
+					getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
+							+ getTextResourceService().getText( ERROR_XML_IMCMP_MISSING, vcomp120Dll ) );
 			return false;
 		}
 
@@ -229,8 +269,8 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 				BufferedReader in = new BufferedReader( new FileReader( reportId ) );
 				String line;
 				String imgSize1 = "1";
-				String imgSize2 = "1";
-				String imgPx2 = "1";
+				String imgSize2 = "2";
+				String imgPx2 = "2";
 
 				while ( (line = in.readLine()) != null ) {
 
@@ -263,6 +303,16 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 					}
 
 					// TODO: Marker: Auswertung und Fehlerausgabe wenn nicht bestanden.
+				}
+				if ( imgPx1.equals( "1" ) && imgPx2.equals( "2" ) && imgSize1.equals( "1" )
+						&& imgSize2.equals( "2" ) ) {
+					// identify_report ist leer oder enthält nicht das was er sollte
+					isValid = false;
+					getMessageService().logError(
+							getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
+									+ getTextResourceService().getText( ERROR_XML_IMCMP_NOREPORTTEXT ) );
+					in.close();
+					return false;
 				}
 				if ( !imgPx1.equals( imgPx2 ) ) {
 					// die beiden Bilder haben nicht gleich viel Pixels

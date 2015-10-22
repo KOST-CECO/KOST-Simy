@@ -427,7 +427,9 @@ public class KOSTSimy implements MessageConstants
 							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".jpeg" )
 							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".jpg" )
 							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".jpe" )
-							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".jp2" ) || origDir
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".jp2" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".gif" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".png" ) || origDir
 							.getAbsolutePath().toLowerCase().endsWith( ".bmp" )) ) {
 						percentage = 100 / count * countVal;
 						if ( percentage < iRandomTest ) {
@@ -462,19 +464,27 @@ public class KOSTSimy implements MessageConstants
 																+ origWithOutExt + ".jp2" );
 														if ( !repFile.exists() ) {
 															repFile = new File( repDir.getAbsolutePath() + File.separator
-																	+ origWithOutExt + ".bmp" );
+																	+ origWithOutExt + ".gif" );
 															if ( !repFile.exists() ) {
-																other = true;
-																LOGGER.logError( kostsimy.getTextResourceService().getText(
-																		MESSAGE_XML_VALERGEBNIS ) );
-																LOGGER.logError( kostsimy.getTextResourceService().getText(
-																		MESSAGE_XML_COMPFILE, origDir ) );
-																LOGGER.logError( kostsimy.getTextResourceService().getText(
-																		MESSAGE_XML_VALERGEBNIS_NOTVALIDATED ) );
-																LOGGER.logError( kostsimy.getTextResourceService().getText(
-																		ERROR_NOREP, origDir.getName() ) );
-																LOGGER.logError( kostsimy.getTextResourceService().getText(
-																		MESSAGE_XML_VALERGEBNIS_CLOSE ) );
+																repFile = new File( repDir.getAbsolutePath() + File.separator
+																		+ origWithOutExt + ".png" );
+																if ( !repFile.exists() ) {
+																	repFile = new File( repDir.getAbsolutePath() + File.separator
+																			+ origWithOutExt + ".bmp" );
+																	if ( !repFile.exists() ) {
+																		other = true;
+																		LOGGER.logError( kostsimy.getTextResourceService().getText(
+																				MESSAGE_XML_VALERGEBNIS ) );
+																		LOGGER.logError( kostsimy.getTextResourceService().getText(
+																				MESSAGE_XML_COMPFILE, origDir ) );
+																		LOGGER.logError( kostsimy.getTextResourceService().getText(
+																				MESSAGE_XML_VALERGEBNIS_NOTVALIDATED ) );
+																		LOGGER.logError( kostsimy.getTextResourceService().getText(
+																				ERROR_NOREP, origDir.getName() ) );
+																		LOGGER.logError( kostsimy.getTextResourceService().getText(
+																				MESSAGE_XML_VALERGEBNIS_CLOSE ) );
+																	}
+																}
 															}
 														}
 													}
@@ -620,7 +630,9 @@ public class KOSTSimy implements MessageConstants
 		String originalName = origDir.getAbsolutePath();
 		String replicaName = repDir.getAbsolutePath();
 		boolean compFile = false;
-		boolean okMandatoryPdfa = false;
+		boolean okMandatoryPdfa = true;
+		boolean okFileO = false;
+		boolean okFileR = true;
 		boolean okMandatory = false;
 
 		if ( (origDir.getAbsolutePath().toLowerCase().endsWith( ".tif" )
@@ -634,6 +646,10 @@ public class KOSTSimy implements MessageConstants
 				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".pdf" )
 				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".pdfa" ) || origDir.getAbsolutePath()
 				.toLowerCase().endsWith( ".bmp" )) ) {
+			// Das Format wird Unterstützt (Original)
+			okFileO = true;
+
+			// Log für Vergleich der Datei beginnen
 			LOGGER.logError( kostsimy.getTextResourceService().getText( MESSAGE_XML_VALERGEBNIS ) );
 			LOGGER.logError( kostsimy.getTextResourceService().getText( MESSAGE_XML_VALTYPE,
 					kostsimy.getTextResourceService().getText( MESSAGE_COMPARISON ) ) );
@@ -642,84 +658,77 @@ public class KOSTSimy implements MessageConstants
 			System.out.println( kostsimy.getTextResourceService().getText( MESSAGE_COMPARISON ) );
 			System.out.println( origDir.getName() + " ?= " + repDir.getName() );
 
-			if ( (repDir.getAbsolutePath().toLowerCase().endsWith( ".pdf" ) || repDir.getAbsolutePath()
-					.toLowerCase().endsWith( ".pdfa" )) ) {
+			if ( repDir.getAbsolutePath().toLowerCase().endsWith( ".pdf" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".pdfa" )
+					|| origDir.getAbsolutePath().toLowerCase().endsWith( ".pdf" )
+					|| origDir.getAbsolutePath().toLowerCase().endsWith( ".pdfa" ) ) {
+				// Aus PDF(s) Bild extrahieren (original und Replica)
 				Controllerpdfa controller2 = (Controllerpdfa) context.getBean( "controllerpdfa" );
 				okMandatoryPdfa = controller2.executeMandatory( origDir, repDir, directoryOfLogfile );
-				File repDirJPEG = new File( tmpDir.getAbsolutePath() + File.separator + "rep"
-						+ File.separator + repDir.getName() + ".jpg" );
-				if ( !repDirJPEG.exists() ) {
-					File repDirJP2 = new File( tmpDir.getAbsolutePath() + File.separator + "rep"
-							+ File.separator + repDir.getName() + ".jp2" );
-					if ( !repDirJP2.exists() ) {
-						okMandatoryPdfa = false;
+
+				// Kontrolle ob die Bilder extrahiert wurden und auf origDir resp. repDir umschreiben
+				if ( origDir.getAbsolutePath().toLowerCase().endsWith( ".pdf" )
+						|| origDir.getAbsolutePath().toLowerCase().endsWith( ".pdfa" ) ) {
+					// Das Format wird Unterstützt (Original)
+					okFileO = true;
+					File origDirJPEG = new File( tmpDir.getAbsolutePath() + File.separator + "orig"
+							+ File.separator + origDir.getName() + ".jpg" );
+					if ( !origDirJPEG.exists() ) {
+						File origDirJP2 = new File( tmpDir.getAbsolutePath() + File.separator + "orig"
+								+ File.separator + origDir.getName() + ".jp2" );
+						if ( !origDirJP2.exists() ) {
+							okFileO = false;
+						} else {
+							origDir = origDirJP2;
+						}
 					} else {
-						repDir = repDirJP2;
+						origDir = origDirJPEG;
 					}
-				} else {
-					repDir = repDirJPEG;
 				}
-				compFile = okMandatoryPdfa;
-			} else if ( (repDir.getAbsolutePath().toLowerCase().endsWith( ".tif" )
+				if ( repDir.getAbsolutePath().toLowerCase().endsWith( ".pdf" )
+						|| repDir.getAbsolutePath().toLowerCase().endsWith( ".pdfa" ) ) {
+					// Das Format wird Unterstützt (Replikat)
+					okFileR = true;
+					File repDirJPEG = new File( tmpDir.getAbsolutePath() + File.separator + "rep"
+							+ File.separator + repDir.getName() + ".jpg" );
+					if ( !repDirJPEG.exists() ) {
+						File repDirJP2 = new File( tmpDir.getAbsolutePath() + File.separator + "rep"
+								+ File.separator + repDir.getName() + ".jp2" );
+						if ( !repDirJP2.exists() ) {
+							okFileR = false;
+						} else {
+							repDir = repDirJP2;
+						}
+					} else {
+						repDir = repDirJPEG;
+					}
+				}
+			}
+
+			if ( (repDir.getAbsolutePath().toLowerCase().endsWith( ".tif" )
 					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".tiff" )
 					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".jpeg" )
 					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".jpg" )
 					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".jpe" )
 					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".jp2" )
 					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".gif" )
-					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".png" ) || repDir.getAbsolutePath()
-					.toLowerCase().endsWith( ".bmp" )) ) {
-				// Bild, keine zusatzmassnahme nötig
-				okMandatoryPdfa = true;
-			} else {
-				// Datei wird nicht unterstützt
-				okMandatoryPdfa = false;
-				LOGGER.logError( kostsimy.getTextResourceService().getText( ERROR_INCORRECTFILEENDING,
-						repDir.getName() ) );
-				System.out.println( kostsimy.getTextResourceService().getText( ERROR_INCORRECTFILEENDING,
-						repDir.getName() ) );
-			}
-
-			if ( (origDir.getAbsolutePath().toLowerCase().endsWith( ".pdf" ) || origDir.getAbsolutePath()
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".png" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".bmp" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".pdf" ) || repDir.getAbsolutePath()
 					.toLowerCase().endsWith( ".pdfa" )) ) {
-				Controllerpdfa controller2 = (Controllerpdfa) context.getBean( "controllerpdfa" );
-				okMandatoryPdfa = controller2.executeMandatory( origDir, repDir, directoryOfLogfile );
-				File origDirJPEG = new File( tmpDir.getAbsolutePath() + File.separator + "orig"
-						+ File.separator + origDir.getName() + ".jpg" );
-				if ( !origDirJPEG.exists() ) {
-					File origDirJP2 = new File( tmpDir.getAbsolutePath() + File.separator + "orig"
-							+ File.separator + origDir.getName() + ".jp2" );
-					if ( !origDirJP2.exists() ) {
-						okMandatoryPdfa = false;
-					} else {
-						origDir = origDirJP2;
-					}
-				} else {
-					origDir = origDirJPEG;
-				}
-
-				compFile = okMandatoryPdfa;
-			} else if ( (origDir.getAbsolutePath().toLowerCase().endsWith( ".tif" )
-					|| origDir.getAbsolutePath().toLowerCase().endsWith( ".tiff" )
-					|| origDir.getAbsolutePath().toLowerCase().endsWith( ".jpeg" )
-					|| origDir.getAbsolutePath().toLowerCase().endsWith( ".jpg" )
-					|| origDir.getAbsolutePath().toLowerCase().endsWith( ".jpe" )
-					|| origDir.getAbsolutePath().toLowerCase().endsWith( ".jp2" )
-					|| origDir.getAbsolutePath().toLowerCase().endsWith( ".gif" )
-					|| origDir.getAbsolutePath().toLowerCase().endsWith( ".png" ) || origDir
-					.getAbsolutePath().toLowerCase().endsWith( ".bmp" )) ) {
-				// Bild, keine zusatzmassnahme nötig
-				okMandatoryPdfa = true;
+				// Das Format wird Unterstützt (Replikat)
+				okFileR = true;
 			} else {
 				// Datei wird nicht unterstützt
-				okMandatoryPdfa = false;
+				okFileR = false;
+				okMandatory = false;
 				LOGGER.logError( kostsimy.getTextResourceService().getText( ERROR_INCORRECTFILEENDING,
 						repDir.getName() ) );
 				System.out.println( kostsimy.getTextResourceService().getText( ERROR_INCORRECTFILEENDING,
 						repDir.getName() ) );
 			}
 
-			if ( okMandatoryPdfa && repDir.exists() && origDir.exists() ) {
+			if ( okFileO && okFileR && okMandatoryPdfa && repDir.exists() && origDir.exists() ) {
 				// JPEG und JP2 konnte aus PDF extrahiert werden
 				Controllerci controller1 = (Controllerci) context.getBean( "controllerci" );
 				okMandatory = controller1.executeMandatory( origDir, repDir, directoryOfLogfile );
@@ -771,14 +780,16 @@ public class KOSTSimy implements MessageConstants
 				File maskImgcmp = new File( directoryOfLogfile.getAbsolutePath() + File.separator
 						+ origDir.getName() + "_mask.jpg" );
 
-				LOGGER.logError( kostsimy.getTextResourceService()
-						.getText( MESSAGE_XML_VALERGEBNIS_INVALID, maskImgcmp.getName()  ) );
+				LOGGER.logError( kostsimy.getTextResourceService().getText(
+						MESSAGE_XML_VALERGEBNIS_INVALID, maskImgcmp.getName() ) );
 				LOGGER
 						.logError( kostsimy.getTextResourceService().getText( MESSAGE_XML_VALERGEBNIS_CLOSE ) );
 				System.out.println( "Dissimilar" );
 				System.out.println( "" );
 			}
 		} else {
+			okFileO = false;
+			okMandatory = false;
 			LOGGER.logError( kostsimy.getTextResourceService().getText( ERROR_INCORRECTFILEENDING,
 					origDir.getName() ) );
 			System.out.println( kostsimy.getTextResourceService().getText( ERROR_INCORRECTFILEENDING,

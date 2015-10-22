@@ -51,7 +51,7 @@ public interface MessageConstants
 	String	MESSAGE_XML_VALERGEBNIS								= "message.xml.valergebnis";
 	String	MESSAGE_XML_VALTYPE										= "message.xml.valtype";
 	String	MESSAGE_XML_STATISTICS								= "message.xml.statistics";
-	
+
 	String	MESSAGE_XML_IMAGE1										= "message.xml.image1";
 	String	MESSAGE_XML_IMAGE2										= "message.xml.image2";
 	String	MESSAGE_XML_LOGEND										= "message.xml.logend";
@@ -78,11 +78,13 @@ public interface MessageConstants
 	String	ERROR_XML_PDFA_JPEGJP2								= "error.xml.pdfa.jpegjp2";
 	String	ERROR_XML_PDFA_JBIG2									= "error.xml.pdfa.jbig2";
 	String	ERROR_XML_PDFA_CCITT									= "error.xml.pdfa.ccitt";
+	String	ERROR_XML_PDFA_NOIMAGE								= "error.xml.pdfa.noimage";
 
 	// Modul IMGCMP
 	String	ERROR_XML_IMCMP_MISSING								= "error.xml.imcmp.missing";
 	String	ERROR_XML_IMCMP_SERVICEFAILED					= "error.xml.imcmp.servicefailed";
 	String	ERROR_XML_IMCMP_NOREPORT							= "error.xml.imcmp.noreport";
+	String	ERROR_XML_IMCMP_NOREPORTTEXT					= "error.xml.imcmp.noreporttext";
 	String	ERROR_XML_IMCMP_NOALL									= "error.xml.imcmp.noall";
 	String	ERROR_XML_CI_CIINVALID								= "error.xml.ci.ciinvalid";
 	String	ERROR_XML_CI_CIINVALIDSTR							= "error.xml.ci.ciinvalidstr";

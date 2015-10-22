@@ -155,6 +155,13 @@ public class PdfExtractJpegModuleImpl extends ComparisonModuleImpl implements Pd
 								+ getTextResourceService().getText( ERROR_XML_UNKNOWN, e.getMessage() ) );
 				validOrig = false;
 			}
+			if ( jpegCounterO == 0 && ccittCounterO == 0 && jp2CounterO == 0 && jbig2CounterO == 0 ) {
+				// keine Bilder in PDF vorhanden
+				getMessageService().logError(
+						getTextResourceService().getText( MESSAGE_XML_MODUL_PDF_EXTRACT )
+								+ getTextResourceService().getText( ERROR_XML_PDFA_NOIMAGE, srcPdfOrig ) );
+				validOrig = false;
+			}
 		}
 		if ( srcPdfRep.endsWith( "pdf" ) || srcPdfRep.endsWith( "pdfa" ) ) {
 			jpegCounter = 0;
@@ -194,54 +201,100 @@ public class PdfExtractJpegModuleImpl extends ComparisonModuleImpl implements Pd
 								+ getTextResourceService().getText( ERROR_XML_UNKNOWN, e.getMessage() ) );
 				validRep = false;
 			}
+			if ( jpegCounterR == 0 && ccittCounterR == 0 && jp2CounterR == 0 && jbig2CounterR == 0 ) {
+				// keine Bilder in PDF vorhanden
+				getMessageService().logError(
+						getTextResourceService().getText( MESSAGE_XML_MODUL_PDF_EXTRACT )
+								+ getTextResourceService().getText( ERROR_XML_PDFA_NOIMAGE, srcPdfRep ) );
+				validRep = false;
+			}
 		}
 		if ( validOrig && validRep && !isFalse ) {
 			// keine Exception
 			if ( isJPEGs ) {
 				// mehrere JPEGs in PDF vorhanden
-				getMessageService().logError(
-						getTextResourceService().getText( MESSAGE_XML_MODUL_PDF_EXTRACT )
-								+ getTextResourceService().getText( ERROR_XML_PDFA_JPEGS,
-										(jpegCounterO + jpegCounterR) ) );
-				valid = false;
+				if ( jpegCounterO > 1 ) {
+					getMessageService().logError(
+							getTextResourceService().getText( MESSAGE_XML_MODUL_PDF_EXTRACT )
+									+ getTextResourceService()
+											.getText( ERROR_XML_PDFA_JPEGS, jpegCounterO, origDatei ) );
+					valid = false;
+				}
+				if ( jpegCounterR > 1 ) {
+					getMessageService()
+							.logError(
+									getTextResourceService().getText( MESSAGE_XML_MODUL_PDF_EXTRACT )
+											+ getTextResourceService().getText( ERROR_XML_PDFA_JPEGS, jpegCounterR,
+													repDatei ) );
+					valid = false;
+				}
 			}
 			if ( isJP2s ) {
 				// mehrere JP2s in PDF vorhanden
-				getMessageService().logError(
-						getTextResourceService().getText( MESSAGE_XML_MODUL_PDF_EXTRACT )
-								+ getTextResourceService().getText( ERROR_XML_PDFA_JP2S,
-										(jp2CounterO + jp2CounterR) ) );
-				valid = false;
+				if ( jp2CounterO > 1 ) {
+					getMessageService()
+							.logError(
+									getTextResourceService().getText( MESSAGE_XML_MODUL_PDF_EXTRACT )
+											+ getTextResourceService().getText( ERROR_XML_PDFA_JP2S, jp2CounterO,
+													origDatei ) );
+					valid = false;
+				}
+				if ( jp2CounterR > 1 ) {
+					getMessageService().logError(
+							getTextResourceService().getText( MESSAGE_XML_MODUL_PDF_EXTRACT )
+									+ getTextResourceService().getText( ERROR_XML_PDFA_JP2S, jp2CounterR, repDatei ) );
+					valid = false;
+				}
 			}
 			if ( isJPEGO && isJP2O ) {
-				// JPEG und JP" in PDF vorhanden
+				// JPEG und JP2 in PDF vorhanden
 				getMessageService().logError(
 						getTextResourceService().getText( MESSAGE_XML_MODUL_PDF_EXTRACT )
 								+ getTextResourceService().getText( ERROR_XML_PDFA_JPEGJP2, jpegCounterO,
-										jp2CounterO ) );
+										jp2CounterO, origDatei ) );
 				valid = false;
 			}
 			if ( isJPEGR && isJP2R ) {
-				// JPEG und JP" in PDF vorhanden
+				// JPEG und JP2 in PDF vorhanden
 				getMessageService().logError(
 						getTextResourceService().getText( MESSAGE_XML_MODUL_PDF_EXTRACT )
 								+ getTextResourceService().getText( ERROR_XML_PDFA_JPEGJP2, jpegCounterR,
-										jp2CounterR ) );
+										jp2CounterR, repDatei ) );
 				valid = false;
 			}
 			if ( isJBIG2 ) {
 				// JBIG2 in PDF vorhanden
-				getMessageService().logError(
-						getTextResourceService().getText( MESSAGE_XML_MODUL_PDF_EXTRACT )
-								+ getTextResourceService().getText( ERROR_XML_PDFA_JBIG2, jbig2Counter ) );
-				valid = false;
+				if ( jbig2CounterO > 0 ) {
+					getMessageService().logError(
+							getTextResourceService().getText( MESSAGE_XML_MODUL_PDF_EXTRACT )
+									+ getTextResourceService().getText( ERROR_XML_PDFA_JBIG2, jbig2CounterO,
+											origDatei) );
+					valid = false;
+				}
+				if ( jbig2CounterR > 0 ) {
+					getMessageService().logError(
+							getTextResourceService().getText( MESSAGE_XML_MODUL_PDF_EXTRACT )
+									+ getTextResourceService()
+											.getText( ERROR_XML_PDFA_JBIG2, jbig2CounterR, repDatei ) );
+					valid = false;
+				}
 			}
 			if ( isCCITT ) {
 				// CCITT in PDF vorhanden
-				getMessageService().logError(
-						getTextResourceService().getText( MESSAGE_XML_MODUL_PDF_EXTRACT )
-								+ getTextResourceService().getText( ERROR_XML_PDFA_CCITT, ccittCounter ) );
-				valid = false;
+				if ( ccittCounterO > 0 ) {
+					getMessageService().logError(
+							getTextResourceService().getText( MESSAGE_XML_MODUL_PDF_EXTRACT )
+									+ getTextResourceService().getText( ERROR_XML_PDFA_CCITT, ccittCounterO,
+											origDatei ) );
+					valid = false;
+				}
+				if ( ccittCounterR > 0 ) {
+					getMessageService().logError(
+							getTextResourceService().getText( MESSAGE_XML_MODUL_PDF_EXTRACT )
+									+ getTextResourceService()
+											.getText( ERROR_XML_PDFA_CCITT, ccittCounterR, repDatei ) );
+					valid = false;
+				}
 			}
 
 		} else {
@@ -260,6 +313,10 @@ public class PdfExtractJpegModuleImpl extends ComparisonModuleImpl implements Pd
 	public void extractImages( String srcPdf, String destImage ) throws IOException,
 			DocumentException
 	{
+		jpegCounter = 0;
+		ccittCounter = 0;
+		jp2Counter = 0;
+		jbig2Counter = 0;
 		try {
 			PdfReader reader = new PdfReader( srcPdf );
 			PdfReaderContentParser parser = new PdfReaderContentParser( reader );
