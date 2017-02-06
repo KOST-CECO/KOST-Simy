@@ -241,10 +241,13 @@ public class KOSTSimy implements MessageConstants
 
 			boolean matchFound = matcher.find();
 			if ( matchFound ) {
-				LOGGER.logError( kostsimy.getTextResourceService().getText( ERROR_IOE,
-						kostsimy.getTextResourceService().getText( ERROR_SPECIAL_CHARACTER, name, matcher.group( i ) ) ) );
+				LOGGER.logError( kostsimy.getTextResourceService().getText(
+						ERROR_IOE,
+						kostsimy.getTextResourceService().getText( ERROR_SPECIAL_CHARACTER, name,
+								matcher.group( i ) ) ) );
 				System.console().printf(
-						kostsimy.getTextResourceService().getText( ERROR_SPECIAL_CHARACTER, name, matcher.group( i ) ) );
+						kostsimy.getTextResourceService().getText( ERROR_SPECIAL_CHARACTER, name,
+								matcher.group( i ) ) );
 				System.exit( 1 );
 			}
 		}
@@ -259,10 +262,13 @@ public class KOSTSimy implements MessageConstants
 
 			boolean matchFound = matcher.find();
 			if ( matchFound ) {
-				LOGGER.logError( kostsimy.getTextResourceService().getText( ERROR_IOE,
-						kostsimy.getTextResourceService().getText( ERROR_SPECIAL_CHARACTER, name, matcher.group( i ) ) ) );
+				LOGGER.logError( kostsimy.getTextResourceService().getText(
+						ERROR_IOE,
+						kostsimy.getTextResourceService().getText( ERROR_SPECIAL_CHARACTER, name,
+								matcher.group( i ) ) ) );
 				System.console().printf(
-						kostsimy.getTextResourceService().getText( ERROR_SPECIAL_CHARACTER, name, matcher.group( i ) ) );
+						kostsimy.getTextResourceService().getText( ERROR_SPECIAL_CHARACTER, name,
+								matcher.group( i ) ) );
 				System.exit( 1 );
 			}
 		}
@@ -302,10 +308,13 @@ public class KOSTSimy implements MessageConstants
 			Matcher matcher = pattern.matcher( element );
 			boolean matchFound = matcher.find();
 			if ( matchFound ) {
-				LOGGER.logError( kostsimy.getTextResourceService().getText( ERROR_IOE,
-						kostsimy.getTextResourceService().getText( ERROR_SPECIAL_CHARACTER, name, matcher.group( i ) ) ) );
+				LOGGER.logError( kostsimy.getTextResourceService().getText(
+						ERROR_IOE,
+						kostsimy.getTextResourceService().getText( ERROR_SPECIAL_CHARACTER, name,
+								matcher.group( i ) ) ) );
 				System.console().printf(
-						kostsimy.getTextResourceService().getText( ERROR_SPECIAL_CHARACTER, name, matcher.group( i ) ) );
+						kostsimy.getTextResourceService().getText( ERROR_SPECIAL_CHARACTER, name,
+								matcher.group( i ) ) );
 				System.exit( 1 );
 			}
 		}
@@ -316,10 +325,13 @@ public class KOSTSimy implements MessageConstants
 			Matcher matcher = pattern.matcher( element );
 			boolean matchFound = matcher.find();
 			if ( matchFound ) {
-				LOGGER.logError( kostsimy.getTextResourceService().getText( ERROR_IOE,
-						kostsimy.getTextResourceService().getText( ERROR_SPECIAL_CHARACTER, name, matcher.group( i ) ) ) );
+				LOGGER.logError( kostsimy.getTextResourceService().getText(
+						ERROR_IOE,
+						kostsimy.getTextResourceService().getText( ERROR_SPECIAL_CHARACTER, name,
+								matcher.group( i ) ) ) );
 				System.console().printf(
-						kostsimy.getTextResourceService().getText( ERROR_SPECIAL_CHARACTER, name, matcher.group( i ) ) );
+						kostsimy.getTextResourceService().getText( ERROR_SPECIAL_CHARACTER, name,
+								matcher.group( i ) ) );
 				System.exit( 1 );
 			}
 		}
@@ -819,7 +831,7 @@ public class KOSTSimy implements MessageConstants
 						MESSAGE_XML_VALERGEBNIS_INVALID, maskImgcmp.getName() ) );
 				LOGGER
 						.logError( kostsimy.getTextResourceService().getText( MESSAGE_XML_VALERGEBNIS_CLOSE ) );
-				System.out.println( "Dissimilar" );
+				System.out.println( "Dissimilar " );
 			}
 		} else {
 			okFileO = false;

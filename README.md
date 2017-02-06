@@ -3,7 +3,7 @@ KOST-Simy
 
 The KOST-Simy application is used for Compare Images. At the moment BMP, JPEG, JP2, TIFF, GIF, PNG and the included JPEG- and JP2-Files in PDF-Files are supported. 
 
-KOST-Simy, Copyright (C) 2015 Claire Roethlisberger (KOST-CECO).
+KOST-Simy, Copyright (C) 2015-2017 Claire Roethlisberger (KOST-CECO).
 
 This program comes with ABSOLUTELY NO WARRANTY.
 This is free software, and you are welcome to redistribute it under 

@@ -2,7 +2,7 @@
 <project default="create_run_jar_de_fr_en" name="Create Runnable Jar for Project KOST-Simy DE, FR, EN">
 	<!--ANT 1.7 is required                                        -->
 	<target name="create_run_jar_de_fr_en">
-        <mkdir dir="../KOST-Simy_TEST"/>
+        <mkdir dir="../../KOST-Simy"/>
 		<!--Erstelle target, damit die Jars auf dem aktuellen Code erstellt werden-->
 		<mkdir dir="KOST-Simy/target/classes" />
 		<copy includeemptydirs="false" overwrite="true" todir="KOST-Simy/target/classes">
@@ -20,7 +20,7 @@
 		<copy file="README.md" todir="KOST-Simy/target/classes" />
 		<!--Kopiere de_messages.properties in target und erstelle kostsimy_de.jar -->
 		<copy file="KOST-Simy/src/main/resources/de_messages.properties" overwrite="true" tofile="KOST-Simy/target/classes/messages.properties"/>
-		<jar destfile="../KOST-Simy_TEST/kostsimy_de.jar">
+		<jar destfile="../../KOST-Simy/kostsimy_de.jar">
 			<manifest>
 				<attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
 				<attribute name="Rsrc-Main-Class" value="ch.kostceco.tools.kostsimy.KOSTSimy"/>
@@ -53,7 +53,7 @@
 		</jar>
 		<!--Kopiere fr_messages.properties in target und erstelle kostsimy_fr.jar -->
 		<copy file="KOST-Simy/src/main/resources/fr_messages.properties" overwrite="true" tofile="KOST-Simy/target/classes/messages.properties"/>
-		<jar destfile="../KOST-Simy_TEST/kostsimy_fr.jar">
+		<jar destfile="../../KOST-Simy/kostsimy_fr.jar">
 			<manifest>
 				<attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
 				<attribute name="Rsrc-Main-Class" value="ch.kostceco.tools.kostsimy.KOSTSimy"/>
@@ -86,7 +86,7 @@
 		</jar>
 		<!--Kopiere en_messages.properties in target und erstelle kostsimy_en.jar -->
 		<copy file="KOST-Simy/src/main/resources/en_messages.properties" overwrite="true" tofile="KOST-Simy/target/classes/messages.properties"/>
-		<jar destfile="../KOST-Simy_TEST/kostsimy_en.jar">
+		<jar destfile="../../KOST-Simy/kostsimy_en.jar">
 			<manifest>
 				<attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
 				<attribute name="Rsrc-Main-Class" value="ch.kostceco.tools.kostsimy.KOSTSimy"/>
@@ -117,22 +117,22 @@
 			<zipfileset dir="KOST-Simy/lib" includes="junit-4.4.jar"/>
 			<zipfileset dir="KOST-Simy/lib" includes="itextpdf-5.5.5.jar"/>
 		</jar>
-		<!--Kopiere alle benötigten Ordner und Dokumente in KOST-Simy_TEST-->
-		<copy overwrite="true" todir="../KOST-Simy_TEST/configuration">
+		<!--Kopiere alle benötigten Ordner und Dokumente in ../../KOST-Simy-->
+		<copy overwrite="true" todir="../../KOST-Simy/configuration">
 			<fileset dir="KOST-Simy/src/main/resources_notJar/configuration"/>
 		</copy>
-		<copy overwrite="true" todir="../KOST-Simy_TEST/doc">
+		<copy overwrite="true" todir="../../KOST-Simy/doc">
 			<fileset dir="KOST-Simy/src/main/resources_notJar/doc"/>
 		</copy>
-		<copy overwrite="true" todir="../KOST-Simy_TEST/license">
+		<copy overwrite="true" todir="../../KOST-Simy/license">
 			<fileset dir="KOST-Simy/src/main/resources_notJar/license"/>
 		</copy>
-		<copy overwrite="true" todir="../KOST-Simy_TEST/resources">
+		<copy overwrite="true" todir="../../KOST-Simy/resources">
 			<fileset dir="KOST-Simy/src/main/resources_notJar/resources"/>
 		</copy>
-		<copy file="KOST-Simy/src/main/resources_notJar/KOST-Simy_de.exe" todir="../KOST-Simy_TEST"/>
-		<copy file="KOST-Simy/src/main/resources_notJar/KOST-Simy_fr.exe" todir="../KOST-Simy_TEST"/>
-		<copy file="KOST-Simy/src/main/resources_notJar/KOST-Simy_en.exe" todir="../KOST-Simy_TEST"/>
+		<copy file="KOST-Simy/src/main/resources_notJar/KOST-Simy_de.exe" todir="../../KOST-Simy"/>
+		<copy file="KOST-Simy/src/main/resources_notJar/KOST-Simy_fr.exe" todir="../../KOST-Simy"/>
+		<copy file="KOST-Simy/src/main/resources_notJar/KOST-Simy_en.exe" todir="../../KOST-Simy"/>
 		<copy file="KOST-Simy/src/main/resources/de_messages.properties" overwrite="true" tofile="KOST-Simy/target/classes/messages.properties"/>
 	</target>
 </project>
