@@ -1,6 +1,6 @@
 /* == KOST-Simy =================================================================================
- * The KOST-Simy application is used for Compare Image-Files. Copyright (C) 2015-2016 Claire
- * Röthlisberger (KOST-CECO)
+ * The KOST-Simy application is used for Compare Image-Files. Copyright (C) 2015-2017 Claire
+ * RÃ¶thlisberger (KOST-CECO)
  * -----------------------------------------------------------------------------------------------
  * KOST-Simy is a development of the KOST-CECO. All rights rest with the KOST-CECO. This application
  * is free software: you can redistribute it and/or modify it under the terms of the GNU General
@@ -30,7 +30,7 @@ import ch.kostceco.tools.kostsimy.util.Util;
 
 /** Vergleicht die beiden Bilder mit ImageMagick Compare und wertet das Resultat aus
  * 
- * @author Rc Claire Röthlisberger, KOST-CECO */
+ * @author Rc Claire RÃ¶thlisberger, KOST-CECO */
 
 public class CompareImageModuleImpl extends ComparisonModuleImpl implements CompareImageModule
 {
@@ -48,8 +48,8 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 	}
 
 	@Override
-	public boolean validate( File origDatei, File repDatei, File directoryOfLogfile )
-			throws CompareImageException
+	public boolean validate( File origDatei, File repDatei, File directoryOfLogfile,
+			String imToleranceTxt ) throws CompareImageException
 	{
 		boolean isValid = true;
 		// boolean isValidFailed = false;
@@ -58,59 +58,52 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 		boolean allNoInt = false;
 		String allStr = "";
 
-		String imToleranceTxt = getConfigurationService().getImTolerance();
 		String imTolerance = "5%";
 		float percentageInvalid = 99.9999f;
-		/* Nicht vergessen in "src/main/resources/config/applicationContext-services.xml" beim
-		 * entsprechenden Modul die property anzugeben: <property name="configurationService"
-		 * ref="configurationService" /> */
 
-		/* Initialisierung ImageMagick -> überprüfen der Angaben: existiert die compare.exe,
+		/* Initialisierung ImageMagick -> Ã¼berprÃ¼fen der Angaben: existiert die compare.exe,
 		 * msvcp120.dll, msvcr120.dll, vcomp120.dll am vorgegebenen Ort? */
-		String compareExe= "compare.exe";
+		String compareExe = "compare.exe";
 		String msvcp120Dll = "msvcp120.dll";
 		String msvcr120Dll = "msvcr120.dll";
-		String vcomp120Dll= "vcomp120.dll";
-		String im= "resources" + File.separator + "ImageMagickCompare-6.9.1-Q16";
-		boolean imExist=true;
-		File fCompareExe = new File( im
-				+ File.separator + compareExe );
+		String vcomp120Dll = "vcomp120.dll";
+		String im = "resources" + File.separator + "ImageMagickCompare-6.9.1-Q16";
+		boolean imExist = true;
+		File fCompareExe = new File( im + File.separator + compareExe );
 		if ( !fCompareExe.exists() ) {
 			// Compare.exe von ImageMagick existiert nicht, kein Vergleich --> Abbruch
 			getMessageService().logError(
 					getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
 							+ getTextResourceService().getText( ERROR_XML_IMCMP_MISSING, compareExe ) );
-			imExist= false;
+			imExist = false;
 		}
-		File fMsvcp120Dll = new File( im
-				+ File.separator + msvcp120Dll );
+		File fMsvcp120Dll = new File( im + File.separator + msvcp120Dll );
 		if ( !fMsvcp120Dll.exists() ) {
 			// msvcp120.dll von ImageMagick existiert nicht, kein Vergleich --> Abbruch
 			getMessageService().logError(
 					getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
 							+ getTextResourceService().getText( ERROR_XML_IMCMP_MISSING, msvcp120Dll ) );
-			imExist= false;
+			imExist = false;
 		}
-		File fMsvcr120Dll = new File( im
-				+ File.separator + msvcr120Dll );
+		File fMsvcr120Dll = new File( im + File.separator + msvcr120Dll );
 		if ( !fMsvcr120Dll.exists() ) {
 			// msvcr120.dll von ImageMagick existiert nicht, kein Vergleich --> Abbruch
 			getMessageService().logError(
 					getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
 							+ getTextResourceService().getText( ERROR_XML_IMCMP_MISSING, msvcr120Dll ) );
-			imExist= false;
+			imExist = false;
 		}
-		File fVcomp120Dll = new File( im
-				+ File.separator + vcomp120Dll );
+		File fVcomp120Dll = new File( im + File.separator + vcomp120Dll );
 		if ( !fVcomp120Dll.exists() ) {
 			// vcomp120.dll von ImageMagick existiert nicht, kein Vergleich --> Abbruch
 			getMessageService().logError(
 					getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
 							+ getTextResourceService().getText( ERROR_XML_IMCMP_MISSING, vcomp120Dll ) );
-			imExist= false;
+			imExist = false;
 		}
 		if ( !imExist ) {
-			// compare.exe/msvcp120.dll/msvcr120.dll/vcomp120.dll von ImageMagick existiert nicht --> Abbruch
+			// compare.exe/msvcp120.dll/msvcr120.dll/vcomp120.dll von ImageMagick existiert nicht -->
+			// Abbruch
 			getMessageService().logError(
 					getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
 							+ getTextResourceService().getText( ERROR_XML_IMCMP_MISSING, vcomp120Dll ) );
@@ -127,6 +120,11 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 			imTolerance = "2%";
 			percentageInvalid = (float) 99.9999;
 			imToleranceTxt = "S";
+		} else if ( imToleranceTxt.contains( "M" ) || imToleranceTxt.contains( "m" ) ) {
+			// medium = 5%
+			imTolerance = "5%";
+			imToleranceTxt = "M";
+			percentageInvalid = (float) 99.999;
 		} else if ( imToleranceTxt.contains( "XL" ) || imToleranceTxt.contains( "xl" ) ) {
 			// xlarge = 15%
 			imTolerance = "15%";
@@ -138,10 +136,10 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 			percentageInvalid = (float) 99.99;
 			imToleranceTxt = "L";
 		} else {
-			// medium = 5%
-			imTolerance = "5%";
-			imToleranceTxt = "M";
-			percentageInvalid = (float) 99.999;
+			// null = 0%
+			imTolerance = "0%";
+			percentageInvalid = (float) 100.000000000;
+			imToleranceTxt = "N";
 		}
 		String pathToCompareExe = fCompareExe.getAbsolutePath();
 
@@ -167,7 +165,7 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 					+ " -metric AE -quiet -identify -verbose -highlight-color DarkRed \""
 					+ origDatei.getAbsolutePath() + "\" \"" + repDatei.getAbsolutePath() + "\" \""
 					+ pathToMask + "\" >>\"" + pathToOutputId + "\" 2>\"" + pathToOutput + "\"";
-			/* Das redirect Zeichen verunmöglicht eine direkte eingabe. mit dem geschachtellten Befehl
+			/* Das redirect Zeichen verunmÃ¶glicht eine direkte eingabe. mit dem geschachtellten Befehl
 			 * gehts: cmd /c\"urspruenlicher Befehl\" */
 
 			Process proc = null;
@@ -176,7 +174,7 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 			try {
 				report = new File( pathToOutput );
 				reportId = new File( pathToOutputId );
-				// falls das File bereits existiert, z.B. von einem vorhergehenden Durchlauf, löschen
+				// falls das File bereits existiert, z.B. von einem vorhergehenden Durchlauf, lÃ¶schen
 				// wir es
 				if ( report.exists() ) {
 					report.delete();
@@ -262,9 +260,9 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 				return false;
 			}
 
-			// Ende IMCMP direkt auszulösen
+			// Ende IMCMP direkt auszulÃ¶sen
 
-			// TODO: Marker: ReportId und auswerten (Grösse und der Pixel)
+			// TODO: Marker: ReportId und auswerten (GrÃ¶sse und der Pixel)
 			try {
 				BufferedReader in = new BufferedReader( new FileReader( reportId ) );
 				String line;
@@ -287,7 +285,7 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 					 * 
 					 * Geometry und Pixels scheinen immer ausgegeben zu werden
 					 * 
-					 * Gemotry und Pixels müssen identisch sein */
+					 * Gemotry und Pixels mÃ¼ssen identisch sein */
 					if ( line.contains( "  Geometry: " ) ) {
 						if ( imgSize1.equals( "1" ) ) {
 							imgSize1 = line;
@@ -306,7 +304,7 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 				}
 				if ( imgPx1.equals( "1" ) && imgPx2.equals( "2" ) && imgSize1.equals( "1" )
 						&& imgSize2.equals( "2" ) ) {
-					// identify_report ist leer oder enthält nicht das was er sollte
+					// identify_report ist leer oder enthÃ¤lt nicht das was er sollte
 					isValid = false;
 					getMessageService().logError(
 							getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
@@ -344,7 +342,7 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 				return false;
 			}
 
-			// TODO: Marker: Report auswerten (Bildvergleich) wenn grösse & PixelAnzahl identisch
+			// TODO: Marker: Report auswerten (Bildvergleich) wenn grÃ¶sse & PixelAnzahl identisch
 			try {
 				BufferedReader in = new BufferedReader( new FileReader( report ) );
 				String line;
@@ -364,7 +362,7 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 					 * 
 					 * in den ersten zwei zeilen sind die eigenschaften der beiden Bilder enthalten
 					 * 
-					 * Danach die Anzahl Pixel mit einer grösseren Abweichung aus, allg: 0= vergleichbar */
+					 * Danach die Anzahl Pixel mit einer grÃ¶sseren Abweichung aus, allg: 0= vergleichbar */
 					if ( line.contains( " all: " ) ) {
 						allExist = true;
 						if ( line.contains( " all: 0" ) ) {
@@ -428,7 +426,7 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 
 						// Prozentzahlen vergleichen
 						if ( percentageInvalid > percentageCalc ) {
-							// Bilder mit einer grösseren Abweichung
+							// Bilder mit einer grÃ¶sseren Abweichung
 							isValid = false;
 
 							getMessageService().logError(
@@ -452,7 +450,7 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 			return false;
 		}
 
-		// reports löschen
+		// reports lÃ¶schen
 		if ( report.exists() ) {
 			report.delete();
 		}

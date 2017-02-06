@@ -1,6 +1,6 @@
 /* == KOST-Simy =================================================================================
- * The KOST-Simy application is used for Compare Image-Files. Copyright (C) 2015-2016 Claire
- * Röthlisberger (KOST-CECO)
+ * The KOST-Simy application is used for Compare Image-Files. Copyright (C) 2015-2017 Claire
+ * RÃ¶thlisberger (KOST-CECO)
  * -----------------------------------------------------------------------------------------------
  * KOST-Simy is a development of the KOST-CECO. All rights rest with the KOST-CECO. This application
  * is free software: you can redistribute it and/or modify it under the terms of the GNU General
@@ -24,7 +24,7 @@ import ch.kostceco.tools.kostsimy.service.MessageService;
 
 public class MessageServiceImpl implements MessageService
 {
-	/** @author Rc Claire Röthlisberger, KOST-CECO */
+	/** @author Rc Claire RÃ¶thlisberger, KOST-CECO */
 
 	private static final Logger	LOGGER	= new Logger( MessageServiceImpl.class );
 

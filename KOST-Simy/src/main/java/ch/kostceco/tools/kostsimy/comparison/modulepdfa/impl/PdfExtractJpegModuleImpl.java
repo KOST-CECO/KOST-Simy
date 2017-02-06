@@ -1,6 +1,6 @@
 /* == KOST-Simy =================================================================================
- * The KOST-Simy application is used for Compare Image-Files. Copyright (C) 2015-2016 Claire
- * Rˆthlisberger (KOST-CECO)
+ * The KOST-Simy application is used for Compare Image-Files. Copyright (C) 2015-2017 Claire
+ * R√∂thlisberger (KOST-CECO)
  * -----------------------------------------------------------------------------------------------
  * KOST-Simy is a development of the KOST-CECO. All rights rest with the KOST-CECO. This application
  * is free software: you can redistribute it and/or modify it under the terms of the GNU General
@@ -36,7 +36,7 @@ import com.itextpdf.text.pdf.parser.TextRenderInfo;
 
 /** Extrahiert mit iText das vorhandene JPEG aus dem PDF und speichert es im Workverzeichnis ab
  * 
- * @author Rc Claire Rˆthlisberger, KOST-CECO */
+ * @author Rc Claire R√∂thlisberger, KOST-CECO */
 
 public class PdfExtractJpegModuleImpl extends ComparisonModuleImpl implements PdfExtractJpegModule
 {
@@ -79,8 +79,8 @@ public class PdfExtractJpegModuleImpl extends ComparisonModuleImpl implements Pd
 	}
 
 	@Override
-	public boolean validate( File origDatei, File repDatei, File directoryOfLogfile )
-			throws PdfExtractJpegException
+	public boolean validate( File origDatei, File repDatei, File directoryOfLogfile,
+			String imToleranceTxt ) throws PdfExtractJpegException
 	{
 		boolean valid = true;
 		boolean validOrig = true;
@@ -268,7 +268,7 @@ public class PdfExtractJpegModuleImpl extends ComparisonModuleImpl implements Pd
 					getMessageService().logError(
 							getTextResourceService().getText( MESSAGE_XML_MODUL_PDF_EXTRACT )
 									+ getTextResourceService().getText( ERROR_XML_PDFA_JBIG2, jbig2CounterO,
-											origDatei) );
+											origDatei ) );
 					valid = false;
 				}
 				if ( jbig2CounterR > 0 ) {
@@ -370,7 +370,7 @@ public class PdfExtractJpegModuleImpl extends ComparisonModuleImpl implements Pd
 							jpegCounter = jpegCounter + 1;
 							filenamePath = filenamePath + ".jpg";
 							File fl = new File( filenamePath );
-							/* JPEG Bild: Das JPEG wird wie vorg‰ngig definiert gespeichert */
+							/* JPEG Bild: Das JPEG wird wie vorg√§ngig definiert gespeichert */
 							os = new FileOutputStream( filenamePath );
 							os.write( image.getImageAsBytes() );
 							os.flush();
@@ -394,7 +394,7 @@ public class PdfExtractJpegModuleImpl extends ComparisonModuleImpl implements Pd
 							jp2Counter = jp2Counter + 1;
 							filenamePath = filenamePath + ".jp2";
 							File fl = new File( filenamePath );
-							/* JPEG2000 Bild: Das JPEG2000 wird wie vorg‰ngig definiert gespeichert */
+							/* JPEG2000 Bild: Das JPEG2000 wird wie vorg√§ngig definiert gespeichert */
 							os = new FileOutputStream( filenamePath );
 							os.write( image.getImageAsBytes() );
 							os.flush();

@@ -2,13 +2,4 @@
 <configuration>
 	<pathtologfile>logs</pathtologfile>
 	<pathtoworkdir>temp_KOST-Simy</pathtoworkdir>
-	<!--Stichprobengroesse (Zahl zwischen 1 und 100) wie viel Prozent verglichen werden soll -->
-	<randomtest>100</randomtest>
-	<!--Toleranz (N, S, M, L, XL)
-	N: Null Toleranz -> Pixelidentische Bilder
-	S: Kleine Toleranz -> Optisch identische Bilder
-	M: Mittlere Toleranz -> gerine Abweichungen, nahezu optisch identische Bilder
-	L: Grosse Toleranz -> kleine Abweichungen z.B. Kompressionsartefakte
-	XL: grosse Toleranz -> mittlere Abweichungen z.B. durch starke Komprimierung oder anti aliasing -->
-	<imtolerance>M</imtolerance>
 </configuration>

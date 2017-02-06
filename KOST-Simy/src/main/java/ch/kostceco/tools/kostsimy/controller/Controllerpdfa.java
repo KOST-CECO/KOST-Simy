@@ -1,6 +1,6 @@
 /* == KOST-Simy =================================================================================
- * The KOST-Simy application is used for Compare Image-Files. Copyright (C) 2015-2016 Claire
- * Röthlisberger (KOST-CECO)
+ * The KOST-Simy application is used for Compare Image-Files. Copyright (C) 2015-2017 Claire
+ * RÃ¶thlisberger (KOST-CECO)
  * -----------------------------------------------------------------------------------------------
  * KOST-Simy is a development of the KOST-CECO. All rights rest with the KOST-CECO. This application
  * is free software: you can redistribute it and/or modify it under the terms of the GNU General
@@ -25,7 +25,7 @@ import ch.kostceco.tools.kostsimy.service.TextResourceService;
 
 /** kostsimy -->
  * 
- * Der Controller ruft die benötigten Module zur Validierung der PDFA-Datei in der benötigten
+ * Der Controller ruft die benÃ¶tigten Module zur Validierung der PDFA-Datei in der benÃ¶tigten
  * Reihenfolge auf.
  * 
  * Die Validierungs-Module werden mittels Spring-Dependency-Injection eingebunden. */
@@ -58,13 +58,14 @@ public class Controllerpdfa implements MessageConstants
 		this.textResourceService = textResourceService;
 	}
 
-	public boolean executeMandatory( File origDatei, File repDatei, File directoryOfLogfile )
+	public boolean executeMandatory( File origDatei, File repDatei, File directoryOfLogfile,
+			String imToleranceTxt )
 	{
 		boolean valid = true;
 		// Validation J
 		try {
-			if ( this.getPdfExtractJpegModule().validate( origDatei, repDatei,
-					directoryOfLogfile ) ) {
+			if ( this.getPdfExtractJpegModule().validate( origDatei, repDatei, directoryOfLogfile,
+					imToleranceTxt ) ) {
 				this.getPdfExtractJpegModule().getMessageService().print();
 			} else {
 				this.getPdfExtractJpegModule().getMessageService().print();

@@ -1,6 +1,6 @@
 /* == KOST-Simy =================================================================================
- * The KOST-Simy application is used for Compare Image-Files. Copyright (C) 2015-2016 Claire
- * Röthlisberger (KOST-CECO)
+ * The KOST-Simy application is used for Compare Image-Files. Copyright (C) 2015-2017 Claire
+ * RÃ¶thlisberger (KOST-CECO)
  * -----------------------------------------------------------------------------------------------
  * KOST-Simy is a development of the KOST-CECO. All rights rest with the KOST-CECO. This application
  * is free software: you can redistribute it and/or modify it under the terms of the GNU General
@@ -78,7 +78,7 @@ public class ConfigurationServiceImpl implements ConfigurationService
 	@Override
 	public String getPathToWorkDir()
 	{
-		/** Gibt den Pfad des Arbeitsverzeichnisses zurück. Dieses Verzeichnis wird zum Extrahieren des
+		/** Gibt den Pfad des Arbeitsverzeichnisses zurÃ¼ck. Dieses Verzeichnis wird zum Extrahieren des
 		 * jpeg-Files aus pdf verwendet.
 		 * 
 		 * @return Pfad des Arbeitsverzeichnisses */
@@ -87,13 +87,14 @@ public class ConfigurationServiceImpl implements ConfigurationService
 			String value = (String) prop;
 			return value;
 		}
-		return null;
+		String error = "Configuration-Error: Missing pathtoworkdir";
+		return error;
 	}
 
 	@Override
 	public String getPathToLogfile()
 	{
-		/** Gibt den Pfad des Logverzeichnisses zurück.
+		/** Gibt den Pfad des Logverzeichnisses zurÃ¼ck.
 		 * 
 		 * @return Pfad des Logverzeichnisses */
 		Object prop = getConfig().getProperty( "pathtologfile" );
@@ -101,36 +102,8 @@ public class ConfigurationServiceImpl implements ConfigurationService
 			String value = (String) prop;
 			return value;
 		}
-		return null;
-	}
-
-	@Override
-	public String getRandomTest()
-	{
-		/** Gibt die prozentuale Stichprobe zurück.
-		 * 
-		 * @return Stichprobe in Prozent */
-		Object prop = getConfig().getProperty( "randomtest" );
-		if ( prop instanceof String ) {
-			String value = (String) prop;
-			return value;
-		}
-		return null;
-	}
-
-	@Override
-	public String getImTolerance()
-	{
-		/** Toleranz beim Bildervergleich s = 2% color diff pro Pixel m = 5% color diff pro Pixel l = 10%
-		 * color diff pro Pixel xl = 15% color diff pro Pixel
-		 * 
-		 * @return toleranz-text */
-		Object prop = getConfig().getProperty( "imtolerance" );
-		if ( prop instanceof String ) {
-			String value = (String) prop;
-			return value;
-		}
-		return null;
+		String error = "Configuration-Error: Missing pathtologfile";
+		return error;
 	}
 
 }

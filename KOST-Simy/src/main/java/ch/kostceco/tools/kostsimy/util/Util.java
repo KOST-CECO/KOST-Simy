@@ -1,6 +1,6 @@
 /* == KOST-Simy =================================================================================
- * The KOST-Simy application is used for Compare Image-Files. Copyright (C) 2015-2016 Claire
- * Röthlisberger (KOST-CECO)
+ * The KOST-Simy application is used for Compare Image-Files. Copyright (C) 2015-2017 Claire
+ * RÃ¶thlisberger (KOST-CECO)
  * -----------------------------------------------------------------------------------------------
  * KOST-Simy is a development of the KOST-CECO. All rights rest with the KOST-CECO. This application
  * is free software: you can redistribute it and/or modify it under the terms of the GNU General
@@ -31,7 +31,7 @@ import java.util.Map;
 
 import ch.kostceco.tools.kostsimy.util.Util;
 
-/** @author Rc Claire Röthlisberger, KOST-CECO */
+/** @author Rc Claire RÃ¶thlisberger, KOST-CECO */
 
 public class Util
 {
@@ -69,7 +69,7 @@ public class Util
 		}
 	}
 
-	/** Schaltet die Konsolen-Ausgabe in ein file um und beendet den Stream, damit dieser gelöscht
+	/** Schaltet die Konsolen-Ausgabe in ein file um und beendet den Stream, damit dieser gelÃ¶scht
 	 * werden kann. */
 	public static void switchOffConsoleToTxtClose( File file ) throws FileNotFoundException
 	{
@@ -96,11 +96,11 @@ public class Util
 		System.setOut( original );
 	}
 
-	/** Löscht ein Verzeichnis rekursiv.
+	/** LÃ¶scht ein Verzeichnis rekursiv.
 	 * 
 	 * @param dir
-	 *          das zu löschende Verzeichnis
-	 * @return true wenn alle Files und Verzeichnisse gelöscht werden konnten */
+	 *          das zu lÃ¶schende Verzeichnis
+	 * @return true wenn alle Files und Verzeichnisse gelÃ¶scht werden konnten */
 	public static boolean deleteDir( File dir )
 	{
 		if ( dir.isDirectory() ) {
@@ -195,11 +195,11 @@ public class Util
 
 		File[] files = quelle.listFiles();
 		File newFile = null;
-		// in diesem Objekt wird für jedes File der Zielpfad gespeichert.
+		// in diesem Objekt wird fÃ¼r jedes File der Zielpfad gespeichert.
 		// 1. Der alte Zielpfad
 		// 2. Das systemspezifische Pfadtrennungszeichen
 		// 3. Der Name des aktuellen Ordners/der aktuellen Datei
-		ziel.mkdirs(); // erstellt alle benötigten Ordner
+		ziel.mkdirs(); // erstellt alle benÃ¶tigten Ordner
 		if ( files != null ) {
 			for ( int i = 0; i < files.length; i++ ) {
 				newFile = new File( ziel.getAbsolutePath() + System.getProperty( "file.separator" )
@@ -232,9 +232,9 @@ public class Util
 		out.close();
 	}
 
-	/** Ergänzt das XML-Element "<End></End>" mit dem ergebnis (string) in dem kost-simy.log.xml (file)
+	/** ErgÃ¤nzt das XML-Element "<End></End>" mit dem ergebnis (string) in dem kost-simy.log.xml (file)
 	 * 
-	 * ! Solche Ersetzungen dürfen nicht in einer Schleife gemacht werden sondern erst am Schluss, da
+	 * ! Solche Ersetzungen dÃ¼rfen nicht in einer Schleife gemacht werden sondern erst am Schluss, da
 	 * diese sehr Zeitintensiv sind !!!
 	 * 
 	 * @throws IOException */
@@ -257,9 +257,9 @@ public class Util
 		}
 	}
 
-	/** Verändert ersetzt oldstring mit newstring in file
+	/** VerÃ¤ndert ersetzt oldstring mit newstring in file
 	 * 
-	 * ! Solche Ersetzungen dürfen nicht in einer Schleife gemacht werden sondern erst am Schluss, da
+	 * ! Solche Ersetzungen dÃ¼rfen nicht in einer Schleife gemacht werden sondern erst am Schluss, da
 	 * diese sehr Zeitintensiv sind !!!
 	 * 
 	 * @throws IOException */
@@ -283,9 +283,9 @@ public class Util
 		}
 	}
 
-	/** Verändert & mit &amp;
+	/** VerÃ¤ndert & mit &amp;
 	 * 
-	 * ! Solche Ersetzungen dürfen nicht in einer Schleife gemacht werden sondern erst am Schluss, da
+	 * ! Solche Ersetzungen dÃ¼rfen nicht in einer Schleife gemacht werden sondern erst am Schluss, da
 	 * diese sehr Zeitintensiv sind !!!
 	 * 
 	 * @throws IOException */

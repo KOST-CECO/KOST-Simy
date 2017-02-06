@@ -1,6 +1,6 @@
 /* == KOST-Simy =================================================================================
- * The KOST-Simy application is used for Compare Image-Files. Copyright (C) 2015-2016 Claire
- * Röthlisberger (KOST-CECO)
+ * The KOST-Simy application is used for Compare Image-Files. Copyright (C) 2015-2017 Claire
+ * RÃ¶thlisberger (KOST-CECO)
  * -----------------------------------------------------------------------------------------------
  * KOST-Simy is a development of the KOST-CECO. All rights rest with the KOST-CECO. This application
  * is free software: you can redistribute it and/or modify it under the terms of the GNU General
@@ -25,8 +25,7 @@ import ch.kostceco.tools.kostsimy.service.TextResourceService;
 
 /** kostsimy -->
  * 
- * Der Controller ruft die benötigten Module zum Bildvergleich in der benötigten
- * Reihenfolge auf.
+ * Der Controller ruft die benÃ¶tigten Module zum Bildvergleich in der benÃ¶tigten Reihenfolge auf.
  * 
  * Die Validierungs-Module werden mittels Spring-Dependency-Injection eingebunden. */
 
@@ -58,14 +57,15 @@ public class Controllerci implements MessageConstants
 		this.textResourceService = textResourceService;
 	}
 
-	public boolean executeMandatory( File origDatei, File repDatei, File directoryOfLogfile )
+	public boolean executeMandatory( File origDatei, File repDatei, File directoryOfLogfile,
+			String imToleranceTxt )
 	{
 		boolean valid = true;
 
 		// Bildervergleich
 		try {
-			if ( this.getCompareImageModule().validate( origDatei, repDatei,
-					directoryOfLogfile ) ) {
+			if ( this.getCompareImageModule().validate( origDatei, repDatei, directoryOfLogfile,
+					imToleranceTxt ) ) {
 				this.getCompareImageModule().getMessageService().print();
 			} else {
 				this.getCompareImageModule().getMessageService().print();

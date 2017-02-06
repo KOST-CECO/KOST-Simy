@@ -1,5 +1,5 @@
 ; The name of the installer
-Name "KOST-Simy v0.0.7"
+Name "KOST-Simy v0.0.9"
 ; Sets the icon of the installer
 Icon "simy.ico"
 ; remove the text 'Nullsoft Install System vX.XX' from the installer window 
@@ -29,7 +29,6 @@ XPStyle on
 !define KOSTHELP      "doc\KOST-Simy_Manual_*.pdf"
 !define CONFIG        "KOSTsimy.conf.xml"
 !define CONFIGPATH    "configuration"
-!define BACKUP        "~backup"
 !define JARFILE       "kostsimy_en.jar"
 !define XTRANS        "resources\XTrans_1.8.0.2\XTrans.exe"
 !define JAVAPATH      "resources\jre6"
@@ -42,6 +41,8 @@ Var LOGFILE
 Var WORKDIR
 Var LOG
 Var HEAPSIZE
+Var TOLERANCE
+Var RANDOM
 Var JAVA
 Var HWND
 
@@ -65,10 +66,6 @@ Function .onInit
   StrCpy $KOSTsimyO $EXEDIR
   StrCpy $KOSTsimyR $EXEDIR
   
-  ; create configuration backup
-  CreateDirectory $EXEDIR\${CONFIGPATH}\${BACKUP}
-  CopyFiles /SILENT /FILESONLY $EXEDIR\${CONFIGPATH}\*.* $EXEDIR\${CONFIGPATH}\${BACKUP}
-
   ; Initializes the plug-ins dir ($PLUGINSDIR) if not already initialized
   InitPluginsDir
   
@@ -81,9 +78,6 @@ Function .onInit
 FunctionEnd
 
 Function .onGUIEnd
-  ; reset configuration and delete backup folder
-  CopyFiles /SILENT /FILESONLY $EXEDIR\${CONFIGPATH}\${BACKUP}\*.* $EXEDIR\${CONFIGPATH}
-  RMDir /r  $EXEDIR\${CONFIGPATH}\${BACKUP}
 FunctionEnd
 
 Function check4Dir
@@ -123,8 +117,8 @@ Function ShowDialog
   WriteINIStr $DIALOG "${REPLICA_FileRequest}"     "Text"  "${REPLICA_FileRequestTXT}"
   WriteINIStr $DIALOG "${REPLICA_SEL_FileFolder}"        "State" "${REPLICA_SEL_FileFolderTXT}"
   WriteINIStr $DIALOG "${START_Validation}"      "Text"  "${START_ValidationTXT}"
-  WriteINIStr $DIALOG "${EDIT_Konfiguration}"    "Text"  "${EDIT_KonfigurationTXT}"
-  WriteINIStr $DIALOG "${RESET_Konfiguration}"   "Text"  "${RESET_KonfigurationTXT}"
+  WriteINIStr $DIALOG "${TOLERANCE_Droplist}"      "Text"  "${TOLERANCE_DroplistTXT}"
+  WriteINIStr $DIALOG "${RANDOM_Droplist}"    "Text"  "${RANDOM_DroplistTXT}"
 
   ; Display the validation options dialog
   InstallOptions::initDialog $DIALOG
@@ -166,6 +160,8 @@ Function LeaveDialog
   ; To get the input of the user, read the State value of a Field 
   ReadINIStr $0 $DIALOG "Settings" "State"
   ReadINIStr $HEAPSIZE $DIALOG "${JVM_Value}" "State" 
+  ReadINIStr $TOLERANCE $DIALOG "${TOLERANCE_Value}" "State" 
+  ReadINIStr $RANDOM $DIALOG "${RANDOM_Value}" "State" 
   
   ${Switch} "Field $0"
     
@@ -244,22 +240,6 @@ Function LeaveDialog
       Abort
     ${Break}
 
-    ${Case} '${EDIT_Konfiguration}'
-      ClearErrors
-      ExecWait '${XTRANS} "$EXEDIR\${CONFIGPATH}\${CONFIG}"'
-      ${If} ${Errors}
-        ExecWait '"notepad.exe" "$EXEDIR\${CONFIGPATH}\${CONFIG}"'
-      ${EndIf}
-      ; ExecWait '"notepad.exe" "$EXEDIR\${CONFIGPATH}\${CONFIG}"'
-      ; ExecShell "open" "$EXEDIR\${CONFIGPATH}\${CONFIG}"
-      Abort
-    ${Break}
-
-    ${Case} '${RESET_Konfiguration}'
-      CopyFiles /SILENT /FILESONLY $EXEDIR\${CONFIGPATH}\${BACKUP}\*.* $EXEDIR\${CONFIGPATH}
-      Abort
-    ${Break}
-
     ${Default}
       ; Abort prevents from leaving the current page
       ; Abort
@@ -293,8 +273,9 @@ Function RunJar
 
   ; Launch java program
   ClearErrors
-  ; MessageBox MB_OK '"$JAVA\bin\java.exe" $HEAPSIZE -jar ${JARFILE} "$KOSTsimyO" "$KOSTsimyR"
-  ExecWait '"$JAVA\bin\java.exe" $HEAPSIZE -jar ${JARFILE} "$KOSTsimyO" "$KOSTsimyR"'
+  ; MessageBox MB_OK '"$JAVA\bin\java.exe" $HEAPSIZE -jar ${JARFILE} "$KOSTsimyO" "$KOSTsimyR"  $TOLERANCE $RANDOM
+  ExecWait '"$JAVA\bin\java.exe" $HEAPSIZE -jar ${JARFILE} "$KOSTsimyO" "$KOSTsimyR" $TOLERANCE $RANDOM'
+
   IfFileExists "$LOG\$LOGFILE.kost-simy.log*" 0 prog_err
   IfErrors goto_err goto_ok
   
@@ -304,7 +285,7 @@ goto_err:
     MessageBox MB_YESNO|MB_ICONEXCLAMATION "$KOSTsimyO$\n${FORMAT_FALSE}" IDYES showlog
     Goto rm_workdir
   prog_err:
-    MessageBox MB_OK|MB_ICONEXCLAMATION "${PROG_ERR} $\n$JAVA\bin\java.exe -jar ${JARFILE} $KOSTsimyO $KOSTsimyR"
+    MessageBox MB_OK|MB_ICONEXCLAMATION "${PROG_ERR} $\n$JAVA\bin\java.exe -jar ${JARFILE} $KOSTsimyO $KOSTsimyR  $TOLERANCE $RANDOM"
     Goto rm_workdir
 goto_ok:
   ; validation without error completed

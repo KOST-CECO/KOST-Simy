@@ -1,6 +1,6 @@
 /* == KOST-Simy =================================================================================
- * The KOST-Simy application is used for Compare Image-Files. Copyright (C) 2015-2016 Claire
- * Röthlisberger (KOST-CECO)
+ * The KOST-Simy application is used for Compare Image-Files. Copyright (C) 2015-2017 Claire
+ * RÃ¶thlisberger (KOST-CECO)
  * -----------------------------------------------------------------------------------------------
  * KOST-Simy is a development of the KOST-CECO. All rights rest with the KOST-CECO. This application
  * is free software: you can redistribute it and/or modify it under the terms of the GNU General
@@ -19,10 +19,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.NDC;
 
-/** Logging Klasse. Sämtliche Log Aufrufe werden an Jakarta Commons Logging delegiert, welches diese
+/** Logging Klasse. SÃ¤mtliche Log Aufrufe werden an Jakarta Commons Logging delegiert, welches diese
  * wiederum an Log4j delegiert.
  * 
- * @author Rc Claire Röthlisberger, KOST-CECO */
+ * @author Rc Claire RÃ¶thlisberger, KOST-CECO */
 public class Logger
 {
 
@@ -30,7 +30,7 @@ public class Logger
 	private Log	log;
 
 	/** Instanzierung eines benannten Loggers. Der Name des Loggers entspricht dem Namen der
-	 * übergebenen Klasse. Sinn: Beim Einsatz der Apache Log4j API können über das Konfig File Package
+	 * Ã¼bergebenen Klasse. Sinn: Beim Einsatz der Apache Log4j API kÃ¶nnen Ã¼ber das Konfig File Package
 	 * oder Klassenfilter gesetzt werden.
 	 * 
 	 * @param clazz
@@ -38,11 +38,11 @@ public class Logger
 	public Logger( Class<?> clazz )
 	{
 
-		// Log Instanz über Factory holen.
+		// Log Instanz Ã¼ber Factory holen.
 		this.log = LogFactory.getLog( clazz );
 	}
 
-	/** Logt einen Fehler der die Stabilität des Programms beeinflusst.
+	/** Logt einen Fehler der die StabilitÃ¤t des Programms beeinflusst.
 	 * 
 	 * @param message
 	 *          Fehlermeldung. */
@@ -52,7 +52,7 @@ public class Logger
 
 	}
 
-	/** Logt einen Fehler der die Stabilität des Programms beeinflusst.
+	/** Logt einen Fehler der die StabilitÃ¤t des Programms beeinflusst.
 	 * 
 	 * @param message
 	 *          Fehlermeldung.
@@ -83,7 +83,7 @@ public class Logger
 		this.log.error( message, t );
 	}
 
-	/** Logt einen Fehler, der behoben oder übergangen werden konnte.
+	/** Logt einen Fehler, der behoben oder Ã¼bergangen werden konnte.
 	 * 
 	 * @param message
 	 *          Meldung. */
@@ -92,7 +92,7 @@ public class Logger
 		this.log.warn( message );
 	}
 
-	/** Logt einen Fehler, der behoben oder übergangen werden konnte.
+	/** Logt einen Fehler, der behoben oder Ã¼bergangen werden konnte.
 	 * 
 	 * @param message
 	 *          Meldung.

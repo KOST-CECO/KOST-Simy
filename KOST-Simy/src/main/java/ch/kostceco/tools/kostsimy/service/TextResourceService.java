@@ -1,6 +1,6 @@
 /* == KOST-Simy =================================================================================
- * The KOST-Simy application is used for Compare Image-Files. Copyright (C) 2015-2016 Claire
- * Röthlisberger (KOST-CECO)
+ * The KOST-Simy application is used for Compare Image-Files. Copyright (C) 2015-2017 Claire
+ * RÃ¶thlisberger (KOST-CECO)
  * -----------------------------------------------------------------------------------------------
  * KOST-Simy is a development of the KOST-CECO. All rights rest with the KOST-CECO. This application
  * is free software: you can redistribute it and/or modify it under the terms of the GNU General
@@ -17,9 +17,9 @@ package ch.kostceco.tools.kostsimy.service;
 
 import java.util.Locale;
 
-/** Service Interface für Text Ressourcen.
+/** Service Interface fÃ¼r Text Ressourcen.
  * 
- * @author Rc Claire Röthlisberger, KOST-CECO */
+ * @author Rc Claire RÃ¶thlisberger, KOST-CECO */
 public interface TextResourceService extends Service
 {
 	/** Ermitteln eines ResourceValues anhand eines Keys. Es wird die Locale aus dem UserContext
@@ -29,9 +29,9 @@ public interface TextResourceService extends Service
 	 * Resource mit den Werten aus aValues ersetzt.
 	 * 
 	 * @param aKey
-	 *          der Resourcenschlüssel
+	 *          der ResourcenschlÃ¼ssel
 	 * @param values
-	 *          die Werte für die Platzhalter
+	 *          die Werte fÃ¼r die Platzhalter
 	 * @return das formatierte Ergebnis */
 	String getText( String aKey, Object... values );
 
@@ -43,9 +43,9 @@ public interface TextResourceService extends Service
 	 * @param locale
 	 *          zu verwendende Locale
 	 * @param aKey
-	 *          der Resourcenschlüssel
+	 *          der ResourcenschlÃ¼ssel
 	 * @param values
-	 *          die Werte für die Platzhalter
+	 *          die Werte fÃ¼r die Platzhalter
 	 * @return das formatierte Ergebnis */
 	String getText( Locale locale, String aKey, Object... values );
 }

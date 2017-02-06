@@ -1,6 +1,6 @@
 /* == KOST-Simy =================================================================================
- * The KOST-Simy application is used for Compare Image-Files. Copyright (C) 2015-2016 Claire
- * Röthlisberger (KOST-CECO)
+ * The KOST-Simy application is used for Compare Image-Files. Copyright (C) 2015-2017 Claire
+ * RÃ¶thlisberger (KOST-CECO)
  * -----------------------------------------------------------------------------------------------
  * KOST-Simy is a development of the KOST-CECO. All rights rest with the KOST-CECO. This application
  * is free software: you can redistribute it and/or modify it under the terms of the GNU General
@@ -49,10 +49,10 @@ import ch.kostceco.tools.kostsimy.service.ConfigurationService;
 import ch.kostceco.tools.kostsimy.service.TextResourceService;
 import ch.kostceco.tools.kostsimy.util.Util;
 
-/** Dies ist die Starter-Klasse, verantwortlich für das Initialisieren des Controllers, des Loggings
+/** Dies ist die Starter-Klasse, verantwortlich fÃ¼r das Initialisieren des Controllers, des Loggings
  * und das Parsen der Start-Parameter.
  * 
- * @author Rc Claire Röthlisberger, KOST-CECO */
+ * @author Rc Claire RÃ¶thlisberger, KOST-CECO */
 
 public class KOSTSimy implements MessageConstants
 {
@@ -82,7 +82,8 @@ public class KOSTSimy implements MessageConstants
 		this.configurationService = configurationService;
 	}
 
-	/** Die Eingabe besteht aus 2 Parameter: [0] Original-Ordner [1] Replica-Ordner
+	/** Die Eingabe besteht aus 4 Parameter: [0] Original-Ordner / Bild [1] Replica-Ordner / Bild [2]
+	 * Toleranz [3] Stichprobe in Prozent
 	 * 
 	 * @param args
 	 * @throws IOException */
@@ -100,8 +101,12 @@ public class KOSTSimy implements MessageConstants
 		KOSTSimy kostsimy = (KOSTSimy) context.getBean( "kostsimy" );
 		File configFile = new File( "configuration" + File.separator + "kostsimy.conf.xml" );
 
-		// Ueberprüfung des Parameters (Log-Verzeichnis)
+		// UeberprÃ¼fung des Parameters (Log-Verzeichnis)
 		String pathToLogfile = kostsimy.getConfigurationService().getPathToLogfile();
+		if ( pathToLogfile.startsWith( "Configuration-Error:" ) ) {
+			System.out.println( pathToLogfile );
+			System.exit( 1 );
+		}
 
 		File directoryOfLogfile = new File( pathToLogfile );
 
@@ -122,28 +127,35 @@ public class KOSTSimy implements MessageConstants
 			System.exit( 1 );
 		}
 
-		// Ist die Anzahl Parameter (2) korrekt?
-		if ( args.length > 3 ) {
+		// Ist die Anzahl Parameter (4) korrekt?
+		if ( args.length != 4 ) {
 			System.out.println( kostsimy.getTextResourceService().getText( ERROR_PARAMETER_USAGE ) );
 			System.exit( 1 );
 		}
 
 		File origDir = new File( args[0] );
 		File repDir = new File( args[1] );
+		String imToleranceTxt = new String( args[2] );
+		String randomTest = new String( args[3] );
 		File logDatei = null;
 		logDatei = origDir;
 
 		// Informationen zum Arbeitsverzeichnis holen
 		String pathToWorkDir = kostsimy.getConfigurationService().getPathToWorkDir();
+		if ( pathToWorkDir.startsWith( "Configuration-Error:" ) ) {
+			System.out.println( pathToWorkDir );
+			System.exit( 1 );
+		}
 		/* Nicht vergessen in "src/main/resources/config/applicationContext-services.xml" beim
 		 * entsprechenden Modul die property anzugeben: <property name="configurationService"
 		 * ref="configurationService" /> */
 
-		// Konfiguration des Loggings, ein File Logger wird zusätzlich erstellt
+		// Konfiguration des Loggings, ein File Logger wird zusÃ¤tzlich erstellt
 		LogConfigurator logConfigurator = (LogConfigurator) context.getBean( "logconfigurator" );
 		String logFileName = logConfigurator.configure( directoryOfLogfile.getAbsolutePath(),
 				logDatei.getName() );
 		File logFile = new File( logFileName );
+
 		// Ab hier kann ins log geschrieben werden...
 
 		LOGGER.logError( kostsimy.getTextResourceService().getText( MESSAGE_XML_HEADER ) );
@@ -151,7 +163,6 @@ public class KOSTSimy implements MessageConstants
 		LOGGER.logError( kostsimy.getTextResourceService().getText( MESSAGE_XML_END ) );
 		LOGGER.logError( kostsimy.getTextResourceService().getText( MESSAGE_XML_INFO ) );
 		System.out.println( "KOST-Simy" );
-		System.out.println( "" );
 
 		if ( !origDir.exists() ) {
 			// Das Original-Verzeichnis existiert nicht
@@ -181,27 +192,23 @@ public class KOSTSimy implements MessageConstants
 			Util.copyFile( xslOrig, xslCopy );
 		}
 
-		// Informationen zur prozentualen Stichprobe holen
-		String randomTest = kostsimy.getConfigurationService().getRandomTest();
-		/* Nicht vergessen in "src/main/resources/config/applicationContext-services.xml" beim
-		 * entsprechenden Modul die property anzugeben: <property name="configurationService"
-		 * ref="configurationService" /> */
+		// Informationen zur prozentualen Stichprobe definieren
 		int iRandomTest = 100;
 		try {
 			iRandomTest = Integer.parseInt( randomTest );
 		} catch ( Exception ex ) {
-			// unzulaessige Eingabe --> 50 wird gesetzt
-			iRandomTest = 50;
+			// unzulaessige Eingabe --> 100 wird gesetzt
+			iRandomTest = 100;
 		}
 		if ( iRandomTest > 100 || iRandomTest < 1 ) {
-			// unzulaessige Eingabe --> 50 wird gesetzt
-			iRandomTest = 50;
+			// unzulaessige Eingabe --> 100 wird gesetzt
+			iRandomTest = 100;
 		}
 
 		File tmpDir = new File( pathToWorkDir );
 
 		/* bestehendes Workverzeichnis Abbruch wenn nicht leer, da am Schluss das Workverzeichnis
-		 * gelöscht wird und entsprechend bestehende Dateien gelöscht werden können */
+		 * gelÃ¶scht wird und entsprechend bestehende Dateien gelÃ¶scht werden kÃ¶nnen */
 		if ( tmpDir.exists() ) {
 			if ( tmpDir.isDirectory() ) {
 				// Get list of file in the directory. When its length is not zero the folder is not empty.
@@ -219,7 +226,7 @@ public class KOSTSimy implements MessageConstants
 			}
 		}
 
-		// Im Pfad keine Sonderzeichen Programme können evtl abstürzen
+		// Im Pfad keine Sonderzeichen Programme kÃ¶nnen evtl abstÃ¼rzen
 
 		String patternStr = "[^!#\\$%\\(\\)\\+,\\-_\\.=@\\[\\]\\{\\}\\~:\\\\a-zA-Z0-9 ]";
 		Pattern pattern = Pattern.compile( patternStr );
@@ -235,9 +242,27 @@ public class KOSTSimy implements MessageConstants
 			boolean matchFound = matcher.find();
 			if ( matchFound ) {
 				LOGGER.logError( kostsimy.getTextResourceService().getText( ERROR_IOE,
-						kostsimy.getTextResourceService().getText( ERROR_SPECIAL_CHARACTER, name ) ) );
-				System.out.println( kostsimy.getTextResourceService().getText( ERROR_SPECIAL_CHARACTER,
-						name ) );
+						kostsimy.getTextResourceService().getText( ERROR_SPECIAL_CHARACTER, name, matcher.group( i ) ) ) );
+				System.console().printf(
+						kostsimy.getTextResourceService().getText( ERROR_SPECIAL_CHARACTER, name, matcher.group( i ) ) );
+				System.exit( 1 );
+			}
+		}
+
+		name = directoryOfLogfile.getAbsolutePath();
+
+		pathElements = name.split( "/" );
+		for ( int i = 0; i < pathElements.length; i++ ) {
+			String element = pathElements[i];
+
+			Matcher matcher = pattern.matcher( element );
+
+			boolean matchFound = matcher.find();
+			if ( matchFound ) {
+				LOGGER.logError( kostsimy.getTextResourceService().getText( ERROR_IOE,
+						kostsimy.getTextResourceService().getText( ERROR_SPECIAL_CHARACTER, name, matcher.group( i ) ) ) );
+				System.console().printf(
+						kostsimy.getTextResourceService().getText( ERROR_SPECIAL_CHARACTER, name, matcher.group( i ) ) );
 				System.exit( 1 );
 			}
 		}
@@ -278,9 +303,9 @@ public class KOSTSimy implements MessageConstants
 			boolean matchFound = matcher.find();
 			if ( matchFound ) {
 				LOGGER.logError( kostsimy.getTextResourceService().getText( ERROR_IOE,
-						kostsimy.getTextResourceService().getText( ERROR_SPECIAL_CHARACTER, name ) ) );
-				System.out.println( kostsimy.getTextResourceService().getText( ERROR_SPECIAL_CHARACTER,
-						name ) );
+						kostsimy.getTextResourceService().getText( ERROR_SPECIAL_CHARACTER, name, matcher.group( i ) ) ) );
+				System.console().printf(
+						kostsimy.getTextResourceService().getText( ERROR_SPECIAL_CHARACTER, name, matcher.group( i ) ) );
 				System.exit( 1 );
 			}
 		}
@@ -292,9 +317,9 @@ public class KOSTSimy implements MessageConstants
 			boolean matchFound = matcher.find();
 			if ( matchFound ) {
 				LOGGER.logError( kostsimy.getTextResourceService().getText( ERROR_IOE,
-						kostsimy.getTextResourceService().getText( ERROR_SPECIAL_CHARACTER, name ) ) );
-				System.out.println( kostsimy.getTextResourceService().getText( ERROR_SPECIAL_CHARACTER,
-						name ) );
+						kostsimy.getTextResourceService().getText( ERROR_SPECIAL_CHARACTER, name, matcher.group( i ) ) ) );
+				System.console().printf(
+						kostsimy.getTextResourceService().getText( ERROR_SPECIAL_CHARACTER, name, matcher.group( i ) ) );
 				System.exit( 1 );
 			}
 		}
@@ -321,7 +346,8 @@ public class KOSTSimy implements MessageConstants
 						repDir.getAbsolutePath() ) );
 				System.exit( 1 );
 			}
-			boolean compFile = compFile( origDir, logFileName, directoryOfLogfile, repDir, tmpDir );
+			boolean compFile = compFile( origDir, logFileName, directoryOfLogfile, repDir, tmpDir,
+					imToleranceTxt );
 
 			float statIo = 0;
 			int statNio = 0;
@@ -369,7 +395,7 @@ public class KOSTSimy implements MessageConstants
 				writer.write( stringDoc2 );
 				writer.close();
 
-				// Der Header wird dabei leider verschossen, wieder zurück ändern
+				// Der Header wird dabei leider verschossen, wieder zurÃ¼ck Ã¤ndern
 				String newstring = kostsimy.getTextResourceService().getText( MESSAGE_XML_HEADER );
 				String oldstring = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><KOSTSimyLog>";
 				Util.oldnewstring( oldstring, newstring, logFile );
@@ -381,18 +407,22 @@ public class KOSTSimy implements MessageConstants
 			}
 
 			if ( compFile ) {
-				// Löschen des Arbeitsverzeichnisses, falls eines angelegt wurde
+				// LÃ¶schen des Arbeitsverzeichnisses, falls eines angelegt wurde
 				if ( tmpDir.exists() ) {
 					Util.deleteDir( tmpDir );
 				}
 				// Validierte Datei valide
+				System.out.println( kostsimy.getTextResourceService().getText( MESSAGE_OK,
+						logFile.getAbsolutePath() ) );
 				System.exit( 0 );
 			} else {
-				// Löschen des Arbeitsverzeichnisses, falls eines angelegt wurde
+				// LÃ¶schen des Arbeitsverzeichnisses, falls eines angelegt wurde
 				if ( tmpDir.exists() ) {
 					Util.deleteDir( tmpDir );
 				}
 				// Fehler in Validierte Datei --> invalide
+				System.out.println( kostsimy.getTextResourceService().getText( MESSAGE_NOK,
+						logFile.getAbsolutePath() ) );
 				System.exit( 2 );
 
 			}
@@ -497,7 +527,7 @@ public class KOSTSimy implements MessageConstants
 
 							if ( !other ) {
 								boolean compFile = compFile( origDir, logFileName, directoryOfLogfile, repFile,
-										tmpDir );
+										tmpDir, imToleranceTxt );
 								if ( compFile ) {
 									// Vergleich bestanden
 									countIo = countIo + 1;
@@ -579,7 +609,7 @@ public class KOSTSimy implements MessageConstants
 				writer.write( stringDoc2 );
 				writer.close();
 
-				// Der Header wird dabei leider verschossen, wieder zurück ändern
+				// Der Header wird dabei leider verschossen, wieder zurÃ¼ck Ã¤ndern
 				String newstring = kostsimy.getTextResourceService().getText( MESSAGE_XML_HEADER );
 				String oldstring = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><KOSTSimyLog>";
 				Util.oldnewstring( oldstring, newstring, logFile );
@@ -591,24 +621,28 @@ public class KOSTSimy implements MessageConstants
 			}
 
 			if ( countNio == 0 && countIo == 0 ) {
-				// keine Dateien verglichen bestehendes Workverzeichnis ggf. löschen
+				// keine Dateien verglichen bestehendes Workverzeichnis ggf. lÃ¶schen
 				if ( tmpDir.exists() ) {
 					Util.deleteDir( tmpDir );
 				}
 				System.exit( 1 );
 			} else if ( countNio == 0 ) {
-				// bestehendes Workverzeichnis ggf. löschen
+				// bestehendes Workverzeichnis ggf. lÃ¶schen
 				if ( tmpDir.exists() ) {
 					Util.deleteDir( tmpDir );
 				}
 				// alle Validierten Dateien valide
+				System.out.println( kostsimy.getTextResourceService().getText( MESSAGE_OK,
+						logFile.getAbsolutePath() ) );
 				System.exit( 0 );
 			} else {
-				// bestehendes Workverzeichnis ggf. löschen
+				// bestehendes Workverzeichnis ggf. lÃ¶schen
 				if ( tmpDir.exists() ) {
 					Util.deleteDir( tmpDir );
 				}
 				// Fehler in Validierten Dateien --> invalide
+				System.out.println( kostsimy.getTextResourceService().getText( MESSAGE_NOK,
+						logFile.getAbsolutePath() ) );
 				System.exit( 2 );
 			}
 			if ( tmpDir.exists() ) {
@@ -620,7 +654,7 @@ public class KOSTSimy implements MessageConstants
 
 	// TODO: compFile --> Vergleich zweier Bilder (Sub-Programm) --> in Arbeit --> nur Marker
 	private static boolean compFile( File origDir, String logFileName, File directoryOfLogfile,
-			File repDir, File tmpDir ) throws IOException
+			File repDir, File tmpDir, String imToleranceTxt ) throws IOException
 
 	{
 		ApplicationContext context = new ClassPathXmlApplicationContext(
@@ -646,17 +680,17 @@ public class KOSTSimy implements MessageConstants
 				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".pdf" )
 				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".pdfa" ) || origDir.getAbsolutePath()
 				.toLowerCase().endsWith( ".bmp" )) ) {
-			// Das Format wird Unterstützt (Original)
+			// Das Format wird UnterstÃ¼tzt (Original)
 			okFileO = true;
 
-			// Log für Vergleich der Datei beginnen
+			// Log fÃ¼r Vergleich der Datei beginnen
 			LOGGER.logError( kostsimy.getTextResourceService().getText( MESSAGE_XML_VALERGEBNIS ) );
 			LOGGER.logError( kostsimy.getTextResourceService().getText( MESSAGE_XML_VALTYPE,
 					kostsimy.getTextResourceService().getText( MESSAGE_COMPARISON ) ) );
 			LOGGER.logError( kostsimy.getTextResourceService().getText( MESSAGE_XML_COMPFILES,
 					originalName, replicaName ) );
-			System.out.println( kostsimy.getTextResourceService().getText( MESSAGE_COMPARISON ) );
-			System.out.println( origDir.getName() + " ?= " + repDir.getName() );
+			System.out.print( kostsimy.getTextResourceService().getText( MESSAGE_COMPARISON ) + ":   " );
+			System.out.print( origDir.getName() + " ?= " + repDir.getName() + "   " );
 
 			if ( repDir.getAbsolutePath().toLowerCase().endsWith( ".pdf" )
 					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".pdfa" )
@@ -664,12 +698,13 @@ public class KOSTSimy implements MessageConstants
 					|| origDir.getAbsolutePath().toLowerCase().endsWith( ".pdfa" ) ) {
 				// Aus PDF(s) Bild extrahieren (original und Replica)
 				Controllerpdfa controller2 = (Controllerpdfa) context.getBean( "controllerpdfa" );
-				okMandatoryPdfa = controller2.executeMandatory( origDir, repDir, directoryOfLogfile );
+				okMandatoryPdfa = controller2.executeMandatory( origDir, repDir, directoryOfLogfile,
+						imToleranceTxt );
 
 				// Kontrolle ob die Bilder extrahiert wurden und auf origDir resp. repDir umschreiben
 				if ( origDir.getAbsolutePath().toLowerCase().endsWith( ".pdf" )
 						|| origDir.getAbsolutePath().toLowerCase().endsWith( ".pdfa" ) ) {
-					// Das Format wird Unterstützt (Original)
+					// Das Format wird UnterstÃ¼tzt (Original)
 					okFileO = true;
 					File origDirJPEG = new File( tmpDir.getAbsolutePath() + File.separator + "orig"
 							+ File.separator + origDir.getName() + ".jpg" );
@@ -687,7 +722,7 @@ public class KOSTSimy implements MessageConstants
 				}
 				if ( repDir.getAbsolutePath().toLowerCase().endsWith( ".pdf" )
 						|| repDir.getAbsolutePath().toLowerCase().endsWith( ".pdfa" ) ) {
-					// Das Format wird Unterstützt (Replikat)
+					// Das Format wird UnterstÃ¼tzt (Replikat)
 					okFileR = true;
 					File repDirJPEG = new File( tmpDir.getAbsolutePath() + File.separator + "rep"
 							+ File.separator + repDir.getName() + ".jpg" );
@@ -716,10 +751,10 @@ public class KOSTSimy implements MessageConstants
 					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".bmp" )
 					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".pdf" ) || repDir.getAbsolutePath()
 					.toLowerCase().endsWith( ".pdfa" )) ) {
-				// Das Format wird Unterstützt (Replikat)
+				// Das Format wird UnterstÃ¼tzt (Replikat)
 				okFileR = true;
 			} else {
-				// Datei wird nicht unterstützt
+				// Datei wird nicht unterstÃ¼tzt
 				okFileR = false;
 				okMandatory = false;
 				LOGGER.logError( kostsimy.getTextResourceService().getText( ERROR_INCORRECTFILEENDING,
@@ -731,7 +766,8 @@ public class KOSTSimy implements MessageConstants
 			if ( okFileO && okFileR && okMandatoryPdfa && repDir.exists() && origDir.exists() ) {
 				// JPEG und JP2 konnte aus PDF extrahiert werden
 				Controllerci controller1 = (Controllerci) context.getBean( "controllerci" );
-				okMandatory = controller1.executeMandatory( origDir, repDir, directoryOfLogfile );
+				okMandatory = controller1.executeMandatory( origDir, repDir, directoryOfLogfile,
+						imToleranceTxt );
 			} else {
 				// Fehler JPEG konnte nicht aus PDF extrahiert werden --> invalide
 				System.out.println( "Error" );
@@ -739,9 +775,9 @@ public class KOSTSimy implements MessageConstants
 			}
 
 			if ( okMandatory ) {
-				// Bilder sind ähnlich --> valide Konvertierung
+				// Bilder sind Ã¤hnlich --> valide Konvertierung
 
-				// Maske und IM-Reports löschen
+				// Maske und IM-Reports lÃ¶schen
 				File reportIm = new File( directoryOfLogfile.getAbsolutePath() + File.separator
 						+ origDir.getName() + "_compare_report.txt" );
 				if ( reportIm.exists() ) {
@@ -762,11 +798,10 @@ public class KOSTSimy implements MessageConstants
 				LOGGER
 						.logError( kostsimy.getTextResourceService().getText( MESSAGE_XML_VALERGEBNIS_CLOSE ) );
 				System.out.println( "Similar" );
-				System.out.println( "" );
 			} else {
 				// Bilder unterscheiden sich --> evtl invalide Konvertierung
 
-				// IMGCMP-Report löschen
+				// IMGCMP-Report lÃ¶schen
 				File reportIm = new File( directoryOfLogfile.getAbsolutePath() + File.separator
 						+ origDir.getName() + "_compare_report.txt" );
 				if ( reportIm.exists() ) {
@@ -785,7 +820,6 @@ public class KOSTSimy implements MessageConstants
 				LOGGER
 						.logError( kostsimy.getTextResourceService().getText( MESSAGE_XML_VALERGEBNIS_CLOSE ) );
 				System.out.println( "Dissimilar" );
-				System.out.println( "" );
 			}
 		} else {
 			okFileO = false;
