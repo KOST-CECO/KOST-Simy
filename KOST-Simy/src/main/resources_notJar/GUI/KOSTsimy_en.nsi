@@ -1,13 +1,12 @@
 ; The name of the installer
-Name "KOST-Simy v0.0.9"
+Name "KOST-Simy v0.0.10"
 ; Sets the icon of the installer
 Icon "simy.ico"
 ; remove the text 'Nullsoft Install System vX.XX' from the installer window 
 BrandingText "Copyright © KOST/CECO"
 ; The file to write
-OutFile "KOST-Simy_fr.exe"
+OutFile "KOST-Simy_en.exe"
 ; The default installation directory
-; InstallDir $DESKTOP
 InstallDir $EXEDIR
 ; Request application privileges for Windows Vista
 RequestExecutionLevel user
@@ -20,26 +19,26 @@ XPStyle on
 !include FileFunc.nsh
 !include LogicLib.nsh
 !include getJavaHome.nsh
-!include langKOSTsimy_fr.nsh
+!include langKOSTsimy_en.nsh
 !include nsDialogs.nsh
 !include XML.nsh
+!include NTProfiles.nsh
 
 ;--------------------------------
 !define INIFILE       "KOSTsimy.ini"
-!define KOSTHELP      "doc\KOST-Simy_Guide_d_application_*.pdf"
-!define CONFIG        "KOSTsimy.conf.xml"
-!define CONFIGPATH    "configuration"
-!define JARFILE       "kostsimy_fr.jar"
-!define XTRANS        "resources\XTrans_1.8.0.2\XTrans.exe"
+!define KOSTHELP      "doc\KOST-Simy_Manual_*.pdf"
+!define WORKDIR       ".kost-simy\temp_KOST-Simy"
+!define LOG	          ".kost-simy\logs"
+!define JARFILE       "kostsimy_en.jar"
+!define XTRANS        "resources\XTrans_1.8.0.4\XTrans.exe"
 !define JAVAPATH      "resources\jre6"
 
 ;--------------------------------
+Var USER
 Var DIALOG
 Var KOSTsimyO
 Var KOSTsimyR
 Var LOGFILE
-Var WORKDIR
-Var LOG
 Var HEAPSIZE
 Var TOLERANCE
 Var RANDOM
@@ -66,6 +65,16 @@ Function .onInit
   StrCpy $KOSTsimyO $EXEDIR
   StrCpy $KOSTsimyR $EXEDIR
   
+  System::Call "advapi32::GetUserName(t .r0, *i ${NSIS_MAX_STRLEN} r1) i.r2"
+  ; MessageBox MB_OK "User name: $0 | Number of characters: $1 | Return value (OK if non-zero): $2"  
+  ${ProfilePathDefaultUser} $3
+  StrCpy $USER "$3$0"
+  ; MessageBox MB_OK `Default User profile path:$\n"$USER"`
+  
+  IfFileExists "$USER\${LOG}\*.*" +4 0
+  CreateDirectory "$USER\.kost-simy"
+  CreateDirectory "$USER\${LOG}"
+
   ; Initializes the plug-ins dir ($PLUGINSDIR) if not already initialized
   InitPluginsDir
   
@@ -78,21 +87,6 @@ Function .onInit
 FunctionEnd
 
 Function .onGUIEnd
-FunctionEnd
-
-Function check4Dir
-  StrCpy $WORKDIR ''
-  StrCpy $LOG ''
-  ${xml::LoadFile} "$EXEDIR\${CONFIGPATH}\${CONFIG}" $0
-  ${xml::RootElement} $0 $1
-  ${xml::XPathString} "//configuration/pathtoworkdir/text()" $WORKDIR $1
-  ${xml::XPathString} "//configuration/pathtologfile/text()" $LOG $1
-  ${xml::Unload}
-  GetFullPathName $1 $WORKDIR
-  IfFileExists $1 fex not_fex
-fex:
-  StrCpy $WORKDIR ''
-not_fex:
 FunctionEnd
 
 Function checkHeapsize
@@ -250,38 +244,22 @@ FunctionEnd
 
 ;--------------------------------
 Function RunJar
-  ; get workdir and logdir
-  Call check4Dir
-  
   ; normalize java heap and stack
   Call checkHeapsize
 
   ; get logfile name
   ${GetFileName} $KOSTsimyO $LOGFILE
-  CreateDirectory $LOG
-  IfFileExists "$LOG\*.*" +2 0
-  CreateDirectory "$EXEDIR\$LOG"
-  ClearErrors
-  FileOpen $R0 "$LOG\$LOGFILE.kost-simy.log.tmp" w
-  FileClose $R0
-  ${If} ${Errors}
-    Delete "$LOG\$LOGFILE.kost-simy.log.tmp"
-    MessageBox MB_OK|MB_ICONEXCLAMATION "${LOG_ERR} $LOG"
-    Abort
-  ${EndIf}
-  delete "$LOG\$LOGFILE.kost-simy.log*"
 
   ; Launch java program
   ClearErrors
-  ; MessageBox MB_OK '"$JAVA\bin\java.exe" $HEAPSIZE -jar ${JARFILE} "$KOSTsimyO" "$KOSTsimyR"  $TOLERANCE $RANDOM
   ExecWait '"$JAVA\bin\java.exe" $HEAPSIZE -jar ${JARFILE} "$KOSTsimyO" "$KOSTsimyR" $TOLERANCE $RANDOM'
 
-  IfFileExists "$LOG\$LOGFILE.kost-simy.log*" 0 prog_err
+  IfFileExists "$USER\${LOG}\$LOGFILE.kost-simy.log.xml" 0 prog_err
   IfErrors goto_err goto_ok
   
 goto_err:
     ; validation with error
-    IfFileExists "$LOG\$LOGFILE.kost-simy.log*" 0 prog_err
+    IfFileExists "$USER\${LOG}\$LOGFILE.kost-simy.log.xml" 0 prog_err
     MessageBox MB_YESNO|MB_ICONEXCLAMATION "$KOSTsimyO$\n${FORMAT_FALSE}" IDYES showlog
     Goto rm_workdir
   prog_err:
@@ -293,16 +271,14 @@ goto_ok:
   Goto rm_workdir
   showlog:
   ; read logfile in detail view
-  GetFullPathName $1 $LOG
-  IfFileExists "$LOG\$LOGFILE.kost-simy.log.xml" 0 +3
+  GetFullPathName $1 $USER\${LOG}
+  IfFileExists "$USER\${LOG}\$LOGFILE.kost-simy.log.xml" 0 +3
   ExecShell "" "iexplore.exe" "$1\$LOGFILE.kost-simy.log.xml"
   Goto rm_workdir
-  ExecShell "" "iexplore.exe" "$1\$LOGFILE.kost-simy.log"
+  ExecShell "" "iexplore.exe" "$1\$LOGFILE.kost-simy.log.xml"
   Goto rm_workdir
-  ; ExecShell "open" "$LOG\$LOGFILE.kost-simy.log.xml"
-  ; ExecShell "open" "$LOG\$LOGFILE.kost-simy.log"
 rm_workdir:
-  GetFullPathName $1 $WORKDIR
+  GetFullPathName $1 $USER\${WORKDIR}
   RMDir /r $1
 FunctionEnd
 

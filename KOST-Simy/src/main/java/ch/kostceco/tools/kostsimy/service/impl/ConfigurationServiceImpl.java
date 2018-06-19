@@ -1,5 +1,5 @@
 /* == KOST-Simy =================================================================================
- * The KOST-Simy application is used for Compare Image-Files. Copyright (C) 2015-2017 Claire
+ * The KOST-Simy application is used for Compare Image-Files. Copyright (C) 2015-2018 Claire
  * Röthlisberger (KOST-CECO)
  * -----------------------------------------------------------------------------------------------
  * KOST-Simy is a development of the KOST-CECO. All rights rest with the KOST-CECO. This application
@@ -16,20 +16,15 @@
 package ch.kostceco.tools.kostsimy.service.impl;
 
 import java.io.File;
-import java.net.URL;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 
-import ch.kostceco.tools.kostsimy.KOSTSimy;
-import ch.kostceco.tools.kostsimy.logging.Logger;
 import ch.kostceco.tools.kostsimy.service.ConfigurationService;
 import ch.kostceco.tools.kostsimy.service.TextResourceService;
 
 public class ConfigurationServiceImpl implements ConfigurationService
 {
 
-	private static final Logger	LOGGER	= new Logger( ConfigurationServiceImpl.class );
 	XMLConfiguration						config	= null;
 	private TextResourceService	textResourceService;
 
@@ -43,52 +38,20 @@ public class ConfigurationServiceImpl implements ConfigurationService
 		this.textResourceService = textResourceService;
 	}
 
-	private XMLConfiguration getConfig()
-	{
-		if ( this.config == null ) {
-
-			try {
-
-				String path = "configuration/kostsimy.conf.xml";
-
-				URL locationOfJar = KOSTSimy.class.getProtectionDomain().getCodeSource().getLocation();
-				String locationOfJarPath = locationOfJar.getPath();
-
-				if ( locationOfJarPath.endsWith( ".jar" ) ) {
-					File file = new File( locationOfJarPath );
-					String fileParent = file.getParent();
-					path = fileParent + "/" + path;
-				}
-
-				config = new XMLConfiguration( path );
-
-			} catch ( ConfigurationException e ) {
-				LOGGER.logError( getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
-						+ getTextResourceService().getText( MESSAGE_XML_CONFIGURATION_ERROR_1 ) );
-				LOGGER.logError( getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
-						+ getTextResourceService().getText( MESSAGE_XML_CONFIGURATION_ERROR_2 ) );
-				LOGGER.logError( getTextResourceService().getText( MESSAGE_XML_MODUL_CI )
-						+ getTextResourceService().getText( MESSAGE_XML_CONFIGURATION_ERROR_3 ) );
-				System.exit( 1 );
-			}
-		}
-		return config;
-	}
-
 	@Override
 	public String getPathToWorkDir()
 	{
-		/** Gibt den Pfad des Arbeitsverzeichnisses zurück. Dieses Verzeichnis wird zum Extrahieren des
-		 * jpeg-Files aus pdf verwendet.
+		/** Gibt den Pfad des Arbeitsverzeichnisses zurück. Dieses Verzeichnis wird temporaere Bilder
+		 * verwendet.
 		 * 
-		 * @return Pfad des Arbeitsverzeichnisses */
-		Object prop = getConfig().getProperty( "pathtoworkdir" );
-		if ( prop instanceof String ) {
-			String value = (String) prop;
-			return value;
+		 * @return Pfad des Arbeitsverzeichnisses = USERPROFILE/.kost-simy/temp_KOST-Simy */
+		String pathtoworkdir = System.getenv( "USERPROFILE" ) + File.separator + ".kost-simy"
+				+ File.separator + "temp_KOST-Simy";
+		File dir = new File( pathtoworkdir );
+		if ( !dir.exists() ) {
+			dir.mkdirs();
 		}
-		String error = "Configuration-Error: Missing pathtoworkdir";
-		return error;
+		return pathtoworkdir;
 	}
 
 	@Override
@@ -96,14 +59,14 @@ public class ConfigurationServiceImpl implements ConfigurationService
 	{
 		/** Gibt den Pfad des Logverzeichnisses zurück.
 		 * 
-		 * @return Pfad des Logverzeichnisses */
-		Object prop = getConfig().getProperty( "pathtologfile" );
-		if ( prop instanceof String ) {
-			String value = (String) prop;
-			return value;
+		 * @return Pfad des Logverzeichnisses = USERPROFILE/.kost-simy/logs */
+		String logs = System.getenv( "USERPROFILE" ) + File.separator + ".kost-simy" + File.separator
+				+ "logs";
+		File dir = new File( logs );
+		if ( !dir.exists() ) {
+			dir.mkdirs();
 		}
-		String error = "Configuration-Error: Missing pathtologfile";
-		return error;
+		return logs;
 	}
 
 }

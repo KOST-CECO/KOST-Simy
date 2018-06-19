@@ -1,5 +1,5 @@
 /* == KOST-Simy =================================================================================
- * The KOST-Simy application is used for Compare Image-Files. Copyright (C) 2015-2017 Claire
+ * The KOST-Simy application is used for Compare Image-Files. Copyright (C) 2015-2018 Claire
  * Röthlisberger (KOST-CECO)
  * -----------------------------------------------------------------------------------------------
  * KOST-Simy is a development of the KOST-CECO. All rights rest with the KOST-CECO. This application
