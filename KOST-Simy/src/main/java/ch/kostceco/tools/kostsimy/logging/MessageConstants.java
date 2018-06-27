@@ -46,6 +46,8 @@ public interface MessageConstants
 	String	MESSAGE_XML_END												= "message.xml.end";
 	String	MESSAGE_XML_INFO											= "message.xml.info";
 	String	MESSAGE_COMPARISON										= "message.comparison";
+	String	MESSAGE_COMPARISON_IMAGE							= "message.comparison.image";
+	String	MESSAGE_COMPARISON_AUDIO							= "message.comparison.audio";
 	String	MESSAGE_XML_COMPFILES									= "message.compfiles";
 	String	MESSAGE_XML_COMPFILE									= "message.compfile";
 	String	MESSAGE_XML_VALERGEBNIS								= "message.xml.valergebnis";
@@ -64,6 +66,10 @@ public interface MessageConstants
 
 	String	MESSAGE_XML_MODUL_PDF_EXTRACT					= "message.xml.modul.pdf.extract";
 	String	MESSAGE_XML_MODUL_CI									= "message.xml.modul.ci";
+	String	MESSAGE_XML_MODUL_AUDIO								= "message.xml.modul.audio";
+	String	MESSAGE_XML_MODUL_AUDIO_DURATION			= "message.xml.modul.audio.duration";
+	String	MESSAGE_XML_MODUL_AUDIO_META					= "message.xml.modul.audio.meta";
+	String	MESSAGE_XML_MODUL_AUDIO_SPEC					= "message.xml.modul.audio.spec";
 
 	String	MESSAGE_XML_CONFIGURATION_ERROR_1			= "message.xml.configuration.error.1";
 	String	MESSAGE_XML_CONFIGURATION_ERROR_2			= "message.xml.configuration.error.2";
@@ -92,4 +98,11 @@ public interface MessageConstants
 	String	ERROR_XML_CI_CIINVALIDSTR							= "error.xml.ci.ciinvalidstr";
 	String	ERROR_XML_CI_SIZEINVALID							= "error.xml.ci.sizeinvalid";
 	String	ERROR_XML_CI_PIXELINVALID							= "error.xml.ci.pixelinvalid";
+
+	// Modul Audio
+	String	ERROR_XML_FFMPEG_MISSING							= "error.xml.ffmpeg.missing";
+	String	ERROR_XML_FFMPEG_SERVICEFAILED				= "error.xml.ffmpeg.servicefailed";
+	String	ERROR_XML_FFMPEG_NOREPORT							= "error.xml.ffmpeg.noreport";
+	String	ERROR_XML_FFMPEG_DURATION							= "error.xml.ffmpeg.duration";
+	String	ERROR_XML_FFMPEG_META									= "error.xml.ffmpeg.meta";
 }

@@ -100,19 +100,19 @@ Function ShowDialog
   ; Writes entry_name=value into [section_name] of ini file
   WriteINIStr $DIALOG "Settings" "NextButtonText" "${NextButtonText}"
   
-  ;WriteINIStr $DIALOG "${INTRO}"                 "Text"  "${INTROTXT}"
-  WriteINIStr $DIALOG "${HELP_Button}"           "Text"  "${HELP_ButtonTXT}"
-  WriteINIStr $DIALOG "${ORIGINAL_FolderRequest}"   "Text"  "${ORIGINAL_FolderRequestTXT}"
-  WriteINIStr $DIALOG "${ORIGINAL_FileRequest}"     "Text"  "${ORIGINAL_FileRequestTXT}"
-  WriteINIStr $DIALOG "${ORIGINAL_SEL_FileFolder}"        "State" "${ORIGINAL_SEL_FileFolderTXT}"
-  WriteINIStr $DIALOG "${JVM_Droplist}"          "Text"  "${JVM_DroplistTXT}"
- ; WriteINIStr $DIALOG "${INPUT_Group}"           "Text"  "${INPUT_GroupTXT}"
+  ;WriteINIStr $DIALOG "${INTRO}"                  "Text"  "${INTROTXT}"
+  WriteINIStr $DIALOG "${HELP_Button}"             "Text"  "${HELP_ButtonTXT}"
+  WriteINIStr $DIALOG "${ORIGINAL_FolderRequest}"  "Text"  "${ORIGINAL_FolderRequestTXT}"
+  WriteINIStr $DIALOG "${ORIGINAL_FileRequest}"    "Text"  "${ORIGINAL_FileRequestTXT}"
+  WriteINIStr $DIALOG "${ORIGINAL_SEL_FileFolder}" "State" "${ORIGINAL_SEL_FileFolderTXT}"
+  WriteINIStr $DIALOG "${JVM_Droplist}"            "Text"  "${JVM_DroplistTXT}"
+ ; WriteINIStr $DIALOG "${INPUT_Group}"            "Text"  "${INPUT_GroupTXT}"
   WriteINIStr $DIALOG "${REPLICA_FolderRequest}"   "Text"  "${REPLICA_FolderRequestTXT}"
   WriteINIStr $DIALOG "${REPLICA_FileRequest}"     "Text"  "${REPLICA_FileRequestTXT}"
-  WriteINIStr $DIALOG "${REPLICA_SEL_FileFolder}"        "State" "${REPLICA_SEL_FileFolderTXT}"
-  WriteINIStr $DIALOG "${START_Validation}"      "Text"  "${START_ValidationTXT}"
+  WriteINIStr $DIALOG "${REPLICA_SEL_FileFolder}"  "State" "${REPLICA_SEL_FileFolderTXT}"
+  WriteINIStr $DIALOG "${START_Validation}"        "Text"  "${START_ValidationTXT}"
   WriteINIStr $DIALOG "${TOLERANCE_Droplist}"      "Text"  "${TOLERANCE_DroplistTXT}"
-  WriteINIStr $DIALOG "${RANDOM_Droplist}"    "Text"  "${RANDOM_DroplistTXT}"
+  WriteINIStr $DIALOG "${RANDOM_Droplist}"         "Text"  "${RANDOM_DroplistTXT}"
 
   ; Display the validation options dialog
   InstallOptions::initDialog $DIALOG

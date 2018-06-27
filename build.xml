@@ -118,9 +118,6 @@
 			<zipfileset dir="KOST-Simy/lib" includes="itextpdf-5.5.5.jar"/>
 		</jar>
 		<!--Kopiere alle benötigten Ordner und Dokumente in ../../KOST-Simy-->
-		<copy overwrite="true" todir="../../KOST-Simy/configuration">
-			<fileset dir="KOST-Simy/src/main/resources_notJar/configuration"/>
-		</copy>
 		<copy overwrite="true" todir="../../KOST-Simy/doc">
 			<fileset dir="KOST-Simy/src/main/resources_notJar/doc"/>
 		</copy>

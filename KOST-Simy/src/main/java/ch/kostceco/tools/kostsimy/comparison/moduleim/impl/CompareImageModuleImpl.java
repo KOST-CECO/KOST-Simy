@@ -174,6 +174,7 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 			try {
 				report = new File( pathToOutput );
 				reportId = new File( pathToOutputId );
+				File mask = new File( pathToMask );
 				// falls das File bereits existiert, z.B. von einem vorhergehenden Durchlauf, löschen
 				// wir es
 				if ( report.exists() ) {
@@ -181,6 +182,9 @@ public class CompareImageModuleImpl extends ComparisonModuleImpl implements Comp
 				}
 				if ( reportId.exists() ) {
 					reportId.delete();
+				}
+				if ( mask.exists() ) {
+					mask.delete();
 				}
 				Util.switchOffConsole();
 				rt = Runtime.getRuntime();

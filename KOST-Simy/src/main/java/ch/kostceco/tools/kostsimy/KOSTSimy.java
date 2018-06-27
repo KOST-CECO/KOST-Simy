@@ -34,6 +34,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.w3c.dom.Element;
 
+import ch.kostceco.tools.kostsimy.controller.Controlleraudio;
 import ch.kostceco.tools.kostsimy.controller.Controllerci;
 import ch.kostceco.tools.kostsimy.controller.Controllerpdfa;
 import ch.kostceco.tools.kostsimy.logging.LogConfigurator;
@@ -199,6 +200,8 @@ public class KOSTSimy implements MessageConstants
 		}
 
 		File tmpDir = new File( pathToWorkDir );
+		File tmpDirOrig = new File( pathToWorkDir + File.separator + "orig" );
+		File tmpDirRep = new File( pathToWorkDir + File.separator + "rep" );
 
 		/* bestehendes Workverzeichnis Abbruch wenn nicht leer, da am Schluss das Workverzeichnis
 		 * gelöscht wird und entsprechend bestehende Dateien gelöscht werden können */
@@ -276,11 +279,17 @@ public class KOSTSimy implements MessageConstants
 		}
 
 		// bestehendes Workverzeichnis wieder anlegen
+		File origDirTmp = new File( tmpDir.getAbsolutePath() + File.separator + "orig" );
+		File repDirTmp = new File( tmpDir.getAbsolutePath() + File.separator + "rep" );
 		if ( !tmpDir.exists() ) {
 			tmpDir.mkdir();
-			File origDirTmp = new File( tmpDir.getAbsolutePath() + File.separator + "orig" );
-			File repDirTmp = new File( tmpDir.getAbsolutePath() + File.separator + "rep" );
 			origDirTmp.mkdir();
+			repDirTmp.mkdir();
+		}
+		if ( !origDirTmp.exists() ) {
+			origDirTmp.mkdir();
+		}
+		if ( !repDirTmp.exists() ) {
 			repDirTmp.mkdir();
 		}
 
@@ -429,8 +438,41 @@ public class KOSTSimy implements MessageConstants
 							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".jpe" )
 							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".jp2" )
 							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".gif" )
-							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".png" ) || origDir
-							.getAbsolutePath().toLowerCase().endsWith( ".bmp" )) ) {
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".png" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".bmp" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".aac" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".ac3" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".aif" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".aifc" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".aiff" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".ape" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".au" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".fla" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".flac" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".ief" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".m4a" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".mac" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".mka" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".mp+" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".mp1" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".mp2" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".mp3" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".mp4" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".mpc" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".mpp" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".ogg" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".opus" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".pcm" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".ra" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".shn" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".snd" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".tta" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".vox" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".vqf" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".wav" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".wave" )
+							|| origDir.getAbsolutePath().toLowerCase().endsWith( ".wma" ) || origDir
+							.getAbsolutePath().toLowerCase().endsWith( ".wv" )) ) {
 						percentage = 100 / count * countVal;
 						if ( percentage < iRandomTest ) {
 							// if ( 100 / count * (countVal + 1) <= iRandomTest ) {
@@ -472,17 +514,37 @@ public class KOSTSimy implements MessageConstants
 																	repFile = new File( repDir.getAbsolutePath() + File.separator
 																			+ origWithOutExt + ".bmp" );
 																	if ( !repFile.exists() ) {
-																		other = true;
-																		LOGGER.logError( kostsimy.getTextResourceService().getText(
-																				MESSAGE_XML_VALERGEBNIS ) );
-																		LOGGER.logError( kostsimy.getTextResourceService().getText(
-																				MESSAGE_XML_COMPFILE, origDir ) );
-																		LOGGER.logError( kostsimy.getTextResourceService().getText(
-																				MESSAGE_XML_VALERGEBNIS_NOTVALIDATED ) );
-																		LOGGER.logError( kostsimy.getTextResourceService().getText(
-																				ERROR_NOREP, origDir.getName() ) );
-																		LOGGER.logError( kostsimy.getTextResourceService().getText(
-																				MESSAGE_XML_VALERGEBNIS_CLOSE ) );
+																		repFile = new File( repDir.getAbsolutePath() + File.separator
+																				+ origWithOutExt + ".flac" );
+																		if ( !repFile.exists() ) {
+																			repFile = new File( repDir.getAbsolutePath() + File.separator
+																					+ origWithOutExt + ".mp3" );
+																			if ( !repFile.exists() ) {
+																				repFile = new File( repDir.getAbsolutePath()
+																						+ File.separator + origWithOutExt + ".m4a" );
+																				if ( !repFile.exists() ) {
+																					repFile = new File( repDir.getAbsolutePath()
+																							+ File.separator + origWithOutExt + ".ogg" );
+																					if ( !repFile.exists() ) {
+																						repFile = new File( repDir.getAbsolutePath()
+																								+ File.separator + origWithOutExt + ".wav" );
+																						if ( !repFile.exists() ) {
+																							other = true;
+																							LOGGER.logError( kostsimy.getTextResourceService()
+																									.getText( MESSAGE_XML_VALERGEBNIS ) );
+																							LOGGER.logError( kostsimy.getTextResourceService()
+																									.getText( MESSAGE_XML_COMPFILE, origDir ) );
+																							LOGGER.logError( kostsimy.getTextResourceService()
+																									.getText( MESSAGE_XML_VALERGEBNIS_NOTVALIDATED ) );
+																							LOGGER.logError( kostsimy.getTextResourceService()
+																									.getText( ERROR_NOREP, origDir.getName() ) );
+																							LOGGER.logError( kostsimy.getTextResourceService()
+																									.getText( MESSAGE_XML_VALERGEBNIS_CLOSE ) );
+																						}
+																					}
+																				}
+																			}
+																		}
 																	}
 																}
 															}
@@ -530,6 +592,13 @@ public class KOSTSimy implements MessageConstants
 								MESSAGE_XML_VALERGEBNIS_CLOSE ) );
 					}
 				}
+			}
+			// bestehendes Workverzeichnis ggf. löschen
+			if ( tmpDirOrig.exists() ) {
+				Util.deleteDir( tmpDirOrig );
+			}
+			if ( tmpDirRep.exists() ) {
+				Util.deleteDir( tmpDirRep );
 			}
 
 			if ( countNio == 0 && countIo == 0 ) {
@@ -602,6 +671,8 @@ public class KOSTSimy implements MessageConstants
 		boolean okMandatoryPdfa = true;
 		boolean okFileO = false;
 		boolean okFileR = true;
+		boolean okAudioO = false;
+		boolean okAudioR = true;
 		boolean okMandatory = false;
 
 		if ( (origDir.getAbsolutePath().toLowerCase().endsWith( ".tif" )
@@ -621,7 +692,7 @@ public class KOSTSimy implements MessageConstants
 			// Log für Vergleich der Datei beginnen
 			LOGGER.logError( kostsimy.getTextResourceService().getText( MESSAGE_XML_VALERGEBNIS ) );
 			LOGGER.logError( kostsimy.getTextResourceService().getText( MESSAGE_XML_VALTYPE,
-					kostsimy.getTextResourceService().getText( MESSAGE_COMPARISON ) ) );
+					kostsimy.getTextResourceService().getText( MESSAGE_COMPARISON_IMAGE ) ) );
 			LOGGER.logError( kostsimy.getTextResourceService().getText( MESSAGE_XML_COMPFILES,
 					originalName, replicaName ) );
 			System.out.print( kostsimy.getTextResourceService().getText( MESSAGE_COMPARISON ) + ":   " );
@@ -756,6 +827,158 @@ public class KOSTSimy implements MessageConstants
 						.logError( kostsimy.getTextResourceService().getText( MESSAGE_XML_VALERGEBNIS_CLOSE ) );
 				System.out.println( "Dissimilar " );
 			}
+
+			// Audio
+		} else if ( (origDir.getAbsolutePath().toLowerCase().endsWith( ".aac" )
+				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".ac3" )
+				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".aif" )
+				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".aifc" )
+				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".aiff" )
+				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".ape" )
+				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".au" )
+				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".fla" )
+				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".flac" )
+				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".ief" )
+				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".m4a" )
+				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".mac" )
+				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".mka" )
+				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".mp+" )
+				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".mp1" )
+				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".mp2" )
+				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".mp3" )
+				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".mp4" )
+				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".mpc" )
+				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".mpp" )
+				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".ogg" )
+				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".opus" )
+				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".pcm" )
+				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".ra" )
+				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".shn" )
+				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".snd" )
+				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".tta" )
+				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".vox" )
+				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".vqf" )
+				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".wav" )
+				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".wave" )
+				|| origDir.getAbsolutePath().toLowerCase().endsWith( ".wma" ) || origDir.getAbsolutePath()
+				.toLowerCase().endsWith( ".wv" )) ) {
+			// Das Format wird Unterstützt (Original)
+			okAudioO = true;
+
+			// Log für Vergleich der Datei beginnen
+			LOGGER.logError( kostsimy.getTextResourceService().getText( MESSAGE_XML_VALERGEBNIS ) );
+			LOGGER.logError( kostsimy.getTextResourceService().getText( MESSAGE_XML_VALTYPE,
+					kostsimy.getTextResourceService().getText( MESSAGE_COMPARISON_AUDIO ) ) );
+			LOGGER.logError( kostsimy.getTextResourceService().getText( MESSAGE_XML_COMPFILES,
+					originalName, replicaName ) );
+			System.out.print( kostsimy.getTextResourceService().getText( MESSAGE_COMPARISON ) + ":   " );
+			System.out.print( origDir.getName() + " ?= " + repDir.getName() + "   " );
+
+			if ( (repDir.getAbsolutePath().toLowerCase().endsWith( ".aac" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".ac3" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".aif" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".aifc" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".aiff" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".ape" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".au" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".fla" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".flac" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".ief" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".m4a" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".mac" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".mka" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".mp+" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".mp1" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".mp2" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".mp3" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".mp4" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".mpc" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".mpp" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".ogg" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".opus" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".pcm" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".ra" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".shn" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".snd" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".tta" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".vox" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".vqf" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".wav" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".wav" )
+					|| repDir.getAbsolutePath().toLowerCase().endsWith( ".wma" ) || repDir.getAbsolutePath()
+					.toLowerCase().endsWith( ".wv" )) ) {
+
+				// Das Format wird Unterstützt (Replikat)
+				okAudioR = true;
+			} else {
+				// Datei wird nicht unterstützt
+				okAudioR = false;
+				okMandatory = false;
+				LOGGER.logError( kostsimy.getTextResourceService().getText( ERROR_INCORRECTFILEENDING,
+						repDir.getName() ) );
+				System.out.println( kostsimy.getTextResourceService().getText( ERROR_INCORRECTFILEENDING,
+						repDir.getName() ) );
+			}
+
+			if ( okAudioO && okAudioR && repDir.exists() && origDir.exists() ) {
+				// Vergleich kann durchgefuehrt werden
+				Controlleraudio controllerA = (Controlleraudio) context.getBean( "controlleraudio" );
+				okMandatory = controllerA.executeMandatory( origDir, repDir, directoryOfLogfile,
+						imToleranceTxt );
+			} else {
+				// Fehler --> invalide
+				System.out.println( "Error" );
+				System.out.println( "" );
+			}
+
+			if ( okMandatory ) {
+				// Audio sind ähnlich --> valide Konvertierung
+
+				// Maske und IM-Reports löschen
+				File reportIm = new File( directoryOfLogfile.getAbsolutePath() + File.separator
+						+ origDir.getName() + "_compare_report.txt" );
+				if ( reportIm.exists() ) {
+					Util.deleteDir( reportIm );
+				}
+				File reportImId = new File( directoryOfLogfile.getAbsolutePath() + File.separator
+						+ origDir.getName() + "_identify_report.txt" );
+				if ( reportImId.exists() ) {
+					Util.deleteDir( reportImId );
+				}
+				File maskImgcmp = new File( directoryOfLogfile.getAbsolutePath() + File.separator
+						+ origDir.getName() + "_mask.jpg" );
+				if ( maskImgcmp.exists() ) {
+					Util.deleteDir( maskImgcmp );
+				}
+				LOGGER
+						.logError( kostsimy.getTextResourceService().getText( MESSAGE_XML_VALERGEBNIS_VALID ) );
+				LOGGER
+						.logError( kostsimy.getTextResourceService().getText( MESSAGE_XML_VALERGEBNIS_CLOSE ) );
+				System.out.println( "Similar" );
+			} else {
+				// Audio unterscheiden sich --> evtl invalide Konvertierung
+
+				// IMGCMP-Report löschen
+				File reportIm = new File( directoryOfLogfile.getAbsolutePath() + File.separator
+						+ origDir.getName() + "_compare_report.txt" );
+				if ( reportIm.exists() ) {
+					Util.deleteDir( reportIm );
+				}
+				File reportImId = new File( directoryOfLogfile.getAbsolutePath() + File.separator
+						+ origDir.getName() + "_identify_report.txt" );
+				if ( reportImId.exists() ) {
+					Util.deleteDir( reportImId );
+				}
+				File maskImgcmp = new File( directoryOfLogfile.getAbsolutePath() + File.separator
+						+ origDir.getName() + "_mask.jpg" );
+
+				LOGGER.logError( kostsimy.getTextResourceService().getText(
+						MESSAGE_XML_VALERGEBNIS_INVALID, maskImgcmp.getName() ) );
+				LOGGER
+						.logError( kostsimy.getTextResourceService().getText( MESSAGE_XML_VALERGEBNIS_CLOSE ) );
+				System.out.println( "Dissimilar " );
+			}
+
 		} else {
 			okFileO = false;
 			okMandatory = false;

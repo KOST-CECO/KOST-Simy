@@ -38,6 +38,13 @@
 		<property name="configurationService" ref="configurationService" />
 	</bean>
 
+	<bean id="compareAudioModule"
+		class="ch.kostceco.tools.kostsimy.comparison.moduleaudio.impl.CompareAudioModuleImpl">
+		<property name="textResourceService" ref="textResourceService" />
+		<property name="messageService" ref="messageService" />
+		<property name="configurationService" ref="configurationService" />
+	</bean>
+
 
 	<bean id="kostsimy" class="ch.kostceco.tools.kostsimy.KOSTSimy">
 		<property name="textResourceService" ref="textResourceService" />
@@ -56,6 +63,11 @@
 	<bean id="controllerci" class="ch.kostceco.tools.kostsimy.controller.Controllerci">
 		<property name="textResourceService" ref="textResourceService" />
 		<property name="compareImageModule" ref="compareImageModule" />
+	</bean>
+
+	<bean id="controlleraudio" class="ch.kostceco.tools.kostsimy.controller.Controlleraudio">
+		<property name="textResourceService" ref="textResourceService" />
+		<property name="compareAudioModule" ref="compareAudioModule" />
 	</bean>
 
 </beans>

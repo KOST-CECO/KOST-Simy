@@ -41,7 +41,7 @@ DetailsButtonText "Details zeigen"
 !define REPLICA_SEL_FileFolderTXT  	"Original: Fichier ou chemin sélectionné"
 !define START_ValidationTXT      	"Comparer"
 !define TOLERANCE_DroplistTXT    	"Tolérance:"
-!define RANDOM_DroplistTXT   		"Exemple %:"
+!define RANDOM_DroplistTXT   		"Echantillon %:"
 !define JVM_DroplistTXT          	"Option de JVM:"
 
 ;----------------------
