@@ -1,6 +1,7 @@
-KOST-Simy
-=========
-
+KOST-Simy (deprecated)
+============
+The development has been officially stopped.
+------------
 The KOST-Simy application is used for compare images (BMP, JPEG, JP2, TIFF, GIF, PNG and the included JPEG- and JP2-Files in PDF-Files) and audio files.  
 
 KOST-Simy, Copyright (C) 2015-2018 Claire Roethlisberger (KOST-CECO).
